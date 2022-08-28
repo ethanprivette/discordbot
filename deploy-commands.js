@@ -3,7 +3,7 @@ const { REST } = require('@discordjs/rest');
 const { clientId, guildId, token } = require('./config.json');
 
 const commands = [
-    new SlashCommandBuilder().setName('test').setDescription('testing command.'),
+    new SlashCommandBuilder().setName('train').setDescription('trains units.'),
     new SlashCommandBuilder().setName('ping').setDescription('replies with pong.'),
     new SlashCommandBuilder().setName('help').setDescription('idk im just trying everything at this point'),
 ]
