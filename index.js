@@ -1,4 +1,4 @@
-const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction } = require('discord.js');
+const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const talkedRecently = new Set(); 
@@ -15,6 +15,24 @@ const client = new Client({
 
 client.on("ready", () => {
     console.log("Bot is online");
+});
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (commandName === 'help') {
+        if (talkedRecently.has(interaction.user.clientId)){
+            interaction.reply({ content: 'Please run the command again in 5 seconds.'})
+        } else {
+            interaction.reply('Use /train to train units.')
+        }
+        talkedRecently.add(interaction.user.clientId);
+        setTimeout(() => {
+            talkedRecently.delete(interaction.user.clientId);
+        }, 5000);
+    }
 });
 
 client.on('interactionCreate', async interaction => {
@@ -103,16 +121,16 @@ client.on('interactionCreate', async interaction =>{
 
     if (interaction.customId == '1k Infantry'){
         await interaction.reply('Infantry will be ready in 30 minutes.')
-        cooldown.Set = 1800000
+        cooldown = 1800000
     }else if (interaction.customId == '8 Tanks'){
         await interaction.reply('Tanks will be ready in 35 minutes.')
-        cooldown.Set = 2100000
+        cooldown = 2100000
     }else if (interaction.customId == '4 Planes'){
         await interaction.reply('Planes will be ready in 1 hour.')
-        cooldown.Set = 3600000
+        cooldown = 3600000
     }else if (interaction.customId == '1 Ship'){
         await interaction.reply('Ship will be ready in 3 hours.')
-        cooldown.Set = 10800000
+        cooldown = 10800000
     }
 });
 
