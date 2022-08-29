@@ -1,6 +1,8 @@
 const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
+const talkedRecently = new Set(); 
+const cooldown = new cooldown;
 
 const client = new Client({
     allowedMentions: {
@@ -21,27 +23,35 @@ client.on('interactionCreate', async interaction => {
 	const { commandName } = interaction;
 
 	if (commandName === 'train') {
-		const row1 = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setCustomId('Infantry')
-                    .setLabel('Infantry')
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                    .setCustomId('Tanks')
-                    .setLabel('Tanks')
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                    .setCustomId('Planes')
-                    .setLabel('Planes')
-                    .setStyle(ButtonStyle.Primary),
-                new ButtonBuilder()
-                    .setCustomId('Navy')
-                    .setLabel('Navy')
-                    .setStyle(ButtonStyle.Primary),
-            );
-        await interaction.reply({ content: 'Which unit would you like to train?', ephemeral: true, components: [row1]});
-            }
+        if (talkedRecently.has(interaction.user.clientId)){
+            interaction.reply({ content: 'Units are already being trained \nplease wait x minutes before training again.', ephemeral: true});
+        } else {
+            const row1 = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('Infantry')
+                        .setLabel('Infantry')
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId('Tanks')
+                        .setLabel('Tanks')
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId('Planes')
+                        .setLabel('Planes')
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId('Navy')
+                        .setLabel('Navy')
+                        .setStyle(ButtonStyle.Primary),
+                );
+                await interaction.reply({ content: 'Which unit would you like to train?', ephemeral: true, components: [row1]});
+                }
+            talkedRecently.add(interaction.user.clientId);
+            setTimeout(() => {
+                talkedRecently.delete(interaction.user.clientId);
+            }, cooldown);
+        }
 });
 
 client.on('interactionCreate', async interaction =>{
@@ -93,6 +103,7 @@ client.on('interactionCreate', async interaction =>{
 
     if (interaction.customId == '1k Infantry'){
         await interaction.reply('Infantry will be ready in 30 minutes.')
+        cooldown = 1800000
     }else if (interaction.customId == '8 Tanks'){
         await interaction.reply('Tanks will be ready in 35 minutes.')
     }else if (interaction.customId == '4 Planes'){
