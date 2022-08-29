@@ -2,7 +2,7 @@ const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messa
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const talkedRecently = new Set(); 
-const cooldown = new cooldown;
+global.cooldown = new Number();
 
 const client = new Client({
     allowedMentions: {
@@ -24,7 +24,7 @@ client.on('interactionCreate', async interaction => {
 
 	if (commandName === 'train') {
         if (talkedRecently.has(interaction.user.clientId)){
-            interaction.reply({ content: 'Units are already being trained \nplease wait x minutes before training again.', ephemeral: true});
+            interaction.reply({ content: 'Units are already being trained \nplease wait ' + (cooldown/60000) + ' minutes before training again.', ephemeral: true});
         } else {
             const row1 = new ActionRowBuilder()
                 .addComponents(
@@ -103,13 +103,16 @@ client.on('interactionCreate', async interaction =>{
 
     if (interaction.customId == '1k Infantry'){
         await interaction.reply('Infantry will be ready in 30 minutes.')
-        cooldown = 1800000
+        cooldown.Set = 1800000
     }else if (interaction.customId == '8 Tanks'){
         await interaction.reply('Tanks will be ready in 35 minutes.')
+        cooldown.Set = 2100000
     }else if (interaction.customId == '4 Planes'){
         await interaction.reply('Planes will be ready in 1 hour.')
+        cooldown.Set = 3600000
     }else if (interaction.customId == '1 Ship'){
         await interaction.reply('Ship will be ready in 3 hours.')
+        cooldown.Set = 10800000
     }
 });
 
