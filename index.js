@@ -166,8 +166,12 @@ client.on('interactionCreate', async interaction =>{
 });
 
 client.on('interactionCreate', async interaction =>{
-    if (!interaction.isChatInputCommand()) return;
-
+	if (!interaction.isChatInputCommand()) return;
+	
+	if (interaction.commandName === 'trainoptions') {
+		const selectedunit = interaction.options.getString('unit');
+		await interaction.reply(`you have selected ${selectedunit}`);
+	}
 });
 
 client.login(token);
