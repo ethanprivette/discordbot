@@ -174,4 +174,13 @@ client.on('interactionCreate', async interaction =>{
 	}
 });
 
+client.on('interactionCreate', async interaction =>{
+    if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName === 'build') {
+        const selectedbuild = interaction.options.getString('infrastructure');
+        await interaction.reply(`you have selected ${selectedbuild}`)
+    }
+})
+
 client.login(token);

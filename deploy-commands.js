@@ -19,8 +19,21 @@ const commands = [
                     { name: 'unit2', value: 'unit2' },
                     { name: 'unit3', value: 'unit3' },
                     { name: 'unit4', value: 'unit4' },
-                    
                 )),
+    new SlashCommandBuilder()
+        .setName('build')
+        .setDescription('Builds infrastructure')
+        .addStringOption(option =>
+            option.setName('infrastructure')
+                .setDescription('build infrastructure')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'teir1', value: 'factories' },
+                    { name: 'teir2', value: 'homes' },
+                    { name: 'teir3', value: 'buffer' },
+                    { name: 'teir4', value: 'bridge' },
+                    { name: 'teir5', value: 'nuke labs' },
+        )),
 ]
 
     .map(command => command.toJSON());
