@@ -6,6 +6,7 @@ const commands = [
     new SlashCommandBuilder().setName('train').setDescription('Trains units.'),
     new SlashCommandBuilder().setName('ping').setDescription('replies with pong.'),
     new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
+    new SlashCommandBuilder().setName('embedtest').setDescription('Testing embeds rn leave me alone.'),
 ]
 
     .map(command => command.toJSON());

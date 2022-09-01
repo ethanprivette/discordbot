@@ -1,8 +1,8 @@
-const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder } = require('discord.js');
+const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const talkedRecently = new Set(); 
-global.cooldown = new Number();
+global.cooldown = 10000;
 
 const client = new Client({
     allowedMentions: {
@@ -12,10 +12,41 @@ const client = new Client({
     intents: [botIntents],
 });
 
-
 client.on("ready", () => {
     console.log("Bot is online");
 });
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (commandName === 'embedtest') {
+        if (talkedRecently.has(interaction.user.clientId)){
+            interaction.reply({ content: 'Please run the command again in 20 seconds.'})
+        } else {
+            const testEmbed = new EmbedBuilder()
+                .setColor(0x0099FF)
+                .setTitle('Some title')
+                .setURL('https://discord.js.org/')
+                .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
+                .setDescription('Some description here')
+                .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+                .addFields(
+                    { name: 'Regular field title', value: 'Some value here' },
+                    { name: '\u200B', value: '\u200B' },
+                    { name: 'Inline field title', value: 'Some value here', inline: true },
+                    { name: 'Inline field title', value: 'Some value here', inline: true },
+                )
+                .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+                .setImage('https://i.imgur.com/AfFp7pu.png')
+                .setTimestamp()
+                .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+        
+            interaction.reply({ embeds: [testEmbed] })
+        }
+    }
+})
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
@@ -42,7 +73,7 @@ client.on('interactionCreate', async interaction => {
 
 	if (commandName === 'train') {
         if (talkedRecently.has(interaction.user.clientId)){
-            interaction.reply({ content: 'Units are already being trained \nplease wait ' + (cooldown/60000) + ' minutes before training again.', ephemeral: true});
+            interaction.reply({ content: 'Units are already being trained \nPlease wait ' + (cooldown/60000) + ' minutes before training again.'});
         } else {
             const row1 = new ActionRowBuilder()
                 .addComponents(
