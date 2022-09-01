@@ -7,17 +7,20 @@ const commands = [
     new SlashCommandBuilder().setName('ping').setDescription('replies with pong.'),
     new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
     new SlashCommandBuilder().setName('embedtest').setDescription('Testing embeds rn leave me alone.'),
-    new SlashCommandBuilder().setName('trainoptions')
-    .setDescription('currently a test for having sub options in the train command')
-    .addStringOption(option =>
-                     option.setName('Unit')
-                        .setRequried(true)
-                        .addChoice(
-        { name: 'unit1', value: 'unit1' },
-        { name: 'unit2', value: 'unit2' },
-        { name: 'unit3', value: 'unit3' },
-        
-        )),
+    new SlashCommandBuilder()
+        .setName('trainoptions')
+        .setDescription('currently a test for having sub options in the train command')
+        .addStringOption(option =>
+            option.setName('unit')
+                .setDescription('subcommand for training units')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'unit1', value: 'unit1' },
+                    { name: 'unit2', value: 'unit2' },
+                    { name: 'unit3', value: 'unit3' },
+                    { name: 'unit4', value: 'unit4' },
+                    
+                )),
 ]
 
     .map(command => command.toJSON());
