@@ -165,4 +165,8 @@ client.on('interactionCreate', async interaction =>{
     }
 });
 
+client.on('interactionCreate', async interaction =>{
+
+});
+
 client.login(token);
