@@ -66,7 +66,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.on('interactionCreate', async interaction => {
+/*client.on('interactionCreate', async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 
 	const { commandName } = interaction;
@@ -164,6 +164,7 @@ client.on('interactionCreate', async interaction =>{
         cooldown = 10800000
     }
 });
+*/
 
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
@@ -176,18 +177,32 @@ client.on('interactionCreate', async interaction =>{
 
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
+    
+    const selectedbuild = interaction.options.getString('infrastructure');
+
+    if(selectedbuild === 'factories') {
+        cooldown = 1200000
+    } else if (selectedbuild === 'homes') {
+        cooldown = 2400000
+    } else if (selectedbuild === 'buffer') {
+        cooldown = 4800000
+    } else if (selectedbuild === 'bridge') {
+        cooldown = 9600000
+    } else if (selectedbuild === 'nuke labs') {
+        cooldown = 19200000
+    }
+    const minutesCooldown = cooldown/60000
 
     if (interaction.commandName === 'build') {
         if (talkedRecently.has(interaction.user.clientId)){
-            interaction.reply({ content: 'Please run the command again in 10 seconds'})
+            interaction.reply({ content: 'Infrastructure is already being built come back in ' + minutesCooldown + ' minutes. '})
         } else { 
-            const selectedbuild = interaction.options.getString('infrastructure');
-            await interaction.reply(`you have selected ${selectedbuild}, they will be ready in X minutes`)
+            await interaction.reply(`you have selected ${selectedbuild}, they will be ready in ` + minutesCooldown + ` minutes.`)
         }
         talkedRecently.add(interaction.user.clientId);
         setTimeout(() => {
             talkedRecently.delete(interaction.user.clientId);
-        },  );
+        }, cooldown );
     }
 });
 
