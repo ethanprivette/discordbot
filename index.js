@@ -178,9 +178,17 @@ client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === 'build') {
-        const selectedbuild = interaction.options.getString('infrastructure');
-        await interaction.reply(`you have selected ${selectedbuild}`)
+        if (talkedRecently.has(interaction.user.clientId)){
+            interaction.reply({ content: 'Please run the command again in 10 seconds'})
+        } else { 
+            const selectedbuild = interaction.options.getString('infrastructure');
+            await interaction.reply(`you have selected ${selectedbuild}, they will be ready in X minutes`)
+        }
+        talkedRecently.add(interaction.user.clientId);
+        setTimeout(() => {
+            talkedRecently.delete(interaction.user.clientId);
+        },  );
     }
-})
+});
 
 client.login(token);

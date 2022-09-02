@@ -28,12 +28,12 @@ const commands = [
                 .setDescription('build infrastructure')
                 .setRequired(true)
                 .addChoices(
-                    { name: 'teir1', value: 'factories' },
-                    { name: 'teir2', value: 'homes' },
-                    { name: 'teir3', value: 'buffer' },
-                    { name: 'teir4', value: 'bridge' },
-                    { name: 'teir5', value: 'nuke labs' },
-        )),
+                    { name: 'Step 1', value: 'factories' },
+                    { name: 'Step 2', value: 'homes' },
+                    { name: 'Step 3', value: 'buffer' },
+                    { name: 'Step 4', value: 'bridge' },
+                    { name: 'Step 5', value: 'nuke labs' },
+                )),
 ]
 
     .map(command => command.toJSON());
