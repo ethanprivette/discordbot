@@ -168,41 +168,63 @@ client.on('interactionCreate', async interaction =>{
 
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
-	
+
+    global.unitCooldown = 10000
+    const selectedunit = interaction.options.getString('unit');
+
+    if (selectedunit === 'infantry') {
+        unitCooldown = 1800000
+    } else if (selectedunit === 'tanks') {
+        unitCooldown = 2100000
+    } else if (selectedunit === 'planes') {
+        unitCooldown = 3600000
+    } else if (selectedunit === 'ships') {
+        unitCooldown = 10800000
+    }
+	const minutesUnitCooldown = unitCooldown/60000
+
 	if (interaction.commandName === 'trainoptions') {
-		const selectedunit = interaction.options.getString('unit');
-		await interaction.reply(`you have selected ${selectedunit}`);
+        if (talkedRecently.has(interaction.user.clientId)){
+            interaction.reply(`${selectedunit} are already being trained come back in ` + minutesUnitCooldown + ` minutes.`)
+        } else {
+            await interaction.reply(`you have selected ${selectedunit}, they will be ready in ` + minutesUnitCooldown + ` minutes.`);
+        }
+        talkedRecently.add(interaction.user.clientId);
+        setTimeout (() => {
+            talkedRecently.delete(interaction.user.clientId);
+        }, unitCooldown );
 	}
 });
 
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
     
+    global.buildCooldown = 10000
     const selectedbuild = interaction.options.getString('infrastructure');
 
     if(selectedbuild === 'factories') {
-        cooldown = 1200000
+        buildCooldown = 1200000
     } else if (selectedbuild === 'homes') {
-        cooldown = 2400000
+        buildCooldown = 2400000
     } else if (selectedbuild === 'buffer') {
-        cooldown = 4800000
+        buildCooldown = 4800000
     } else if (selectedbuild === 'bridge') {
-        cooldown = 9600000
+        buildCooldown = 9600000
     } else if (selectedbuild === 'nuke labs') {
-        cooldown = 19200000
+        buildCooldown = 19200000
     }
-    const minutesCooldown = cooldown/60000
+    const minutesBuildCooldown = buildCooldown/60000
 
     if (interaction.commandName === 'build') {
         if (talkedRecently.has(interaction.user.clientId)){
-            interaction.reply({ content: 'Infrastructure is already being built come back in ' + minutesCooldown + ' minutes. '})
+            interaction.reply({ content: `${selectedbuild} is already being built come back in ` + minutesBuildCooldown + ' minutes. '})
         } else { 
-            await interaction.reply(`you have selected ${selectedbuild}, they will be ready in ` + minutesCooldown + ` minutes.`)
+            await interaction.reply(`you have selected ${selectedbuild}, they will be ready in ` + minutesBuildCooldown + ` minutes.`)
         }
         talkedRecently.add(interaction.user.clientId);
         setTimeout(() => {
             talkedRecently.delete(interaction.user.clientId);
-        }, cooldown );
+        }, buildCooldown );
     }
 });
 

@@ -15,10 +15,10 @@ const commands = [
                 .setDescription('subcommand for training units')
                 .setRequired(true)
                 .addChoices(
-                    { name: 'unit1', value: 'unit1' },
-                    { name: 'unit2', value: 'unit2' },
-                    { name: 'unit3', value: 'unit3' },
-                    { name: 'unit4', value: 'unit4' },
+                    { name: 'infantry', value: 'infantry' },
+                    { name: 'tanks', value: 'tanks' },
+                    { name: 'planes', value: 'planes' },
+                    { name: 'ships', value: 'ships' },
                 )),
     new SlashCommandBuilder()
         .setName('build')
