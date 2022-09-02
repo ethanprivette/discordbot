@@ -1,8 +1,21 @@
 const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
+const { Sequelize } = require('sequelize');
 const talkedRecently = new Set(); 
 global.cooldown = 10000;
+
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: 'path/to/database.sqlite'
+  });
+
+try {
+    sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 
 const client = new Client({
     allowedMentions: {
@@ -185,7 +198,7 @@ client.on('interactionCreate', async interaction =>{
 
 	if (interaction.commandName === 'trainoptions') {
         if (talkedRecently.has(interaction.user.clientId)){
-            interaction.reply(`${selectedunit} are already being trained come back in ` + minutesUnitCooldown + ` minutes.`)
+            await interaction.reply(`${selectedunit} are already being trained come back in ` + minutesUnitCooldown + ` minutes.`)
         } else {
             await interaction.reply(`you have selected ${selectedunit}, they will be ready in ` + minutesUnitCooldown + ` minutes.`);
         }
