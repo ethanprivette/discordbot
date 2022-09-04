@@ -55,9 +55,9 @@ const commands = [
                             .setRequired(true)
                             .addChoices(
             { name: 'Infantry', value: 'infantry'},
-            { name: 'Infantry', value: 'infantry'},
-            { name: 'Infantry', value: 'infantry'},
-            { name: 'Infantry', value: 'infantry'},
+            { name: 'Tank', value: 'tank'},
+            { name: 'Plane', value: 'plane'},
+            { name: 'Ship', value: 'ship'},
             )
         .addStringOption(option =>
                          option.setName('Amount')
