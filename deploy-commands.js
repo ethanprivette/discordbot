@@ -59,7 +59,7 @@ const commands = [
             { name: 'Infantry', value: 'infantry'},
             { name: 'Infantry', value: 'infantry'},
             )
-        .addIntegerOption(option =>
+        .addStringOption(option =>
                          option.setName('Amount')
                             .setDescription('amount Of Units')
                             .setRequired(true)
