@@ -46,6 +46,24 @@ const commands = [
                     { name: 'Step 4', value: 'bridge' },
                     { name: 'Step 5', value: 'nuke labs' },
                 )),
+    new SlashCommandBuilder()
+        .setName('trainoptions')
+        .setDescription('wooper tesing bitches')
+        .addStringOption(option =>
+                         option.setName('Type')
+                            .setDescription('Type')
+                            .setRequired(true)
+                            .addChoices(
+            { name: 'Infantry', value: 'infantry'},
+            { name: 'Infantry', value: 'infantry'},
+            { name: 'Infantry', value: 'infantry'},
+            { name: 'Infantry', value: 'infantry'},
+            )
+        .addIntegerOption(option =>
+                         option.setName('Amount')
+                            .setDescription('amount Of Units')
+                            .setRequired(true)
+            )),
 ]
 
     .map(command => command.toJSON());
