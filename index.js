@@ -233,8 +233,7 @@ client.on('interactionCreate', async interaction =>{
             interaction.reply({ content: `${selectedbuild} is already being built come back in ` + minutesBuildCooldown + ' minutes. '})
         } else { 
             await interaction.reply(`you have selected ${selectedbuild}, they will be ready in ` + minutesBuildCooldown + ` minutes.`)
-        }
-        talkedRecently.add(interaction.user.clientId);
+        } talkedRecently.add(interaction.user.clientId);
         setTimeout(() => {
             talkedRecently.delete(interaction.user.clientId);
         }, buildCooldown );
