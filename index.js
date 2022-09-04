@@ -235,6 +235,12 @@ client.on('interactionCreate', async interaction =>{
 });
 
 client.on('interactionCreate', async interaction =>{
+	in (!interaction.isChatInputCommand()) return;
+	
+}];
+
+
+client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
     
     global.buildCooldown = 10000
