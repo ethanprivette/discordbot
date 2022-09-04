@@ -50,20 +50,22 @@ const commands = [
         .setName('trainoptions')
         .setDescription('wooper tesing bitches')
         .addStringOption(option =>
-                         option.setName('Type')
-                            .setDescription('Type')
-                            .setRequired(true)
-                            .addChoices(
-            { name: 'Infantry', value: 'infantry'},
-            { name: 'Tank', value: 'tank'},
-            { name: 'Plane', value: 'plane'},
-            { name: 'Ship', value: 'ship'},
-            )
+            option.setName('Type')
+                .setDescription('Type')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'Infantry', value: 'infantry'},
+                    { name: 'Tank', value: 'tank'},
+                    { name: 'Plane', value: 'plane'},
+                    { name: 'Ship', value: 'ship'},
+                ))
         .addStringOption(option =>
-                         option.setName('Amount')
-                            .setDescription('amount Of Units')
-                            .setRequired(true)
-            )),
+            option.setName('Amount')
+                .setDescription('amount Of Units')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'idk', value: 'help me'},
+                )),
 ]
 
     .map(command => command.toJSON());
