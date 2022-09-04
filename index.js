@@ -221,11 +221,11 @@ client.on('interactionCreate', async interaction =>{
 
 	const minutesUnitCooldown = unitCooldown/60000
 
-	if (interaction.commandName === 'trainoptions') {
+	if (interaction.commandName === 'train') {
         if (talkedRecently.has(interaction.user.clientId)){
-            await interaction.reply(`${selectedunit} are already being trained come back in ` + minutesUnitCooldown + ` minutes.`)
+            await interaction.reply(`${selectedunit} are already being trained come back in ${minutesUnitCooldown} minutes.`)
         } else {
-            await interaction.reply(`you have selected ${selectedunit}, they will be ready in ` + minutesUnitCooldown + ` minutes.`);
+            await interaction.reply(`you have selected ${selectedunit}, they will be ready in ${minutesUnitCooldown} minutes.`);
         }
         talkedRecently.add(interaction.user.clientId);
         setTimeout (() => {
