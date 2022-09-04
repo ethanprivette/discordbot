@@ -19,7 +19,7 @@ try {
 
 const client = new Client({
     allowedMentions: {
-        parse: [`users`, `roles`],
+        parse: [`users`, `roles`, `everyone`],
         repliedUser: true,
     },
     intents: [botIntents],
@@ -268,6 +268,14 @@ client.on('interactionCreate', async interaction =>{
         setTimeout(() => {
             talkedRecently.delete(interaction.user.clientId);
         }, buildCooldown );
+    }
+});
+
+client.on('interactionCreate', async interaction =>{
+	if (!interaction.isChatInputCommand()) return;
+	
+    if (interaction.commandName === 'big_red_button') {
+        interaction.reply(`@everyone \nEveryone but the Checks now dead from nuclear fallout.`)
     }
 });
 

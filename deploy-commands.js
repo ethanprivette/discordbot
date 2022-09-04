@@ -5,6 +5,7 @@ const { clientId, guildId, token } = require('./config.json');
 const commands = [
     //new SlashCommandBuilder().setName('train').setDescription('Trains units.'),
     new SlashCommandBuilder().setName('ping').setDescription('replies with pong.'),
+    new SlashCommandBuilder().setName('big_red_button').setDescription('nukes everyone'),
     new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
     new SlashCommandBuilder().setName('embedtest').setDescription('Testing embeds rn leave me alone.'),
     new SlashCommandBuilder()
@@ -47,25 +48,25 @@ const commands = [
                     { name: 'Step 5', value: 'nuke labs' },
                 )),
     new SlashCommandBuilder()
-        .setName('trainoptions')
-        .setDescription('wooper tesing bitches')
-        .addStringOption(option =>
-            option.setName('Type')
-                .setDescription('Type')
-                .setRequired(true)
-                .addChoices(
-                    { name: 'Infantry', value: 'infantry'},
-                    { name: 'Tank', value: 'tank'},
-                    { name: 'Plane', value: 'plane'},
-                    { name: 'Ship', value: 'ship'},
-                ))
-        .addStringOption(option =>
-            option.setName('Amount')
-                .setDescription('amount Of Units')
-                .setRequired(true)
-                .addChoices(
-                    { name: 'idk', value: 'help me'},
-                )),
+                .setName('trainoptions')
+                .setDescription('wooper tesing bitches')
+                .addStringOption(option =>
+                    option.setName('Type')
+                        .setDescription('Type')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'Infantry', value: 'infantry'},
+                            { name: 'Tank', value: 'tank'},
+                            { name: 'Plane', value: 'plane'},
+                            { name: 'Ship', value: 'ship'},
+                        ))
+                .addStringOption(option =>
+                    option.setName('Amount')
+                        .setDescription('amount Of Units')
+                        .setRequired(true)
+                        .addChoices(
+                            { name: 'idk', value: 'help me'},
+                        )),
 ]
 
     .map(command => command.toJSON());
