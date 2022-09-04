@@ -185,15 +185,40 @@ client.on('interactionCreate', async interaction =>{
     global.unitCooldown = 10000
     const selectedunit = interaction.options.getString('unit');
 
-    if (selectedunit === 'infantry') {
+    if (selectedunit === '1k infantry') {
         unitCooldown = 1800000
-    } else if (selectedunit === 'tanks') {
+    } else if (selectedunit === '5k infantry') {
+        unitCooldown = 1800000*5
+    } else if (selectedunit === '10k infantry') {
+        unitCooldown = 1800000*10
+    } else if (selectedunit === '20k infantry') {
+        unitCooldown = 1800000*20
+    } else if (selectedunit === '8 tanks') {
         unitCooldown = 2100000
-    } else if (selectedunit === 'planes') {
+    } else if (selectedunit === '40 tanks') {
+        unitCooldown = 2100000*5
+    } else if (selectedunit === '80 tanks') {
+        unitCooldown = 2100000*10
+    } else if (selectedunit === '160 tanks') {
+        unitCooldown = 2100000*20
+    } else if (selectedunit === '4 planes') {
         unitCooldown = 3600000
-    } else if (selectedunit === 'ships') {
+    } else if (selectedunit === '20 planes') {
+        unitCooldown = 3600000*5
+    } else if (selectedunit === '40 planes') {
+        unitCooldown = 3600000*10
+    } else if (selectedunit === '80 planes') {
+        unitCooldown = 3600000*20
+    } else if (selectedunit === '1 ship') {
         unitCooldown = 10800000
+    } else if (selectedunit === '5 ships') {
+        unitCooldown = 10800000*5
+    } else if (selectedunit === '10 ships') {
+        unitCooldown = 10800000*10
+    } else if (selectedunit === '20 ships') {
+        unitCooldown = 10800000*20
     }
+
 	const minutesUnitCooldown = unitCooldown/60000
 
 	if (interaction.commandName === 'trainoptions') {
