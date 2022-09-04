@@ -235,9 +235,9 @@ client.on('interactionCreate', async interaction =>{
 });
 
 client.on('interactionCreate', async interaction =>{
-	in (!interaction.isChatInputCommand()) return;
+	if (!interaction.isChatInputCommand()) return;
 	
-}];
+});
 
 
 client.on('interactionCreate', async interaction =>{
