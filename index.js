@@ -124,12 +124,6 @@ client.on('interactionCreate', async interaction =>{
     }
 });
 
-function testfunction(type, amount) {
-	
-	console.log('function successful');
-	console.log('you selected ' + amount + ' ' + type);
-	await interaction.reply('you selected ' + amount + ' ' + type);
-};
 
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
@@ -139,6 +133,13 @@ client.on('interactionCreate', async interaction =>{
 		const unitType = interaction.options.getString('units');
 		testfunction(unitType, unitAmount)
 	}
+        function testfunction(type, amount) {
+	
+	console.log('function successful');
+	console.log('you selected ' + amount + ' ' + type);
+	interaction.reply('you selected ' + amount + ' ' + type)
+};
+
 });
 
 
