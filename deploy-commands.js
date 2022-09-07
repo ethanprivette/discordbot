@@ -50,27 +50,17 @@ const commands = [
     new SlashCommandBuilder()
         .setName('traintest')
         .setDescription('idk man')
-        .addStringOption(option => option.setName('input').setDescription('test').setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
-                .setName('infantry')
-                .setDescription('trains infantry')
-                .addIntegerOption(option => option.setName('amount').setDescription('train multiple infantry').setRequired(true)))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('tanks')
-                .setDescription('trains tanks')
-                .addIntegerOption(option => option.setName('amount').setDescription('train multiple tanks').setRequired(true)))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('planes')
-                .setDescription('trains infantry')
-                .addIntegerOption(option => option.setName('amount').setDescription('train multiple planes').setRequired(true)))
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('ship')
-                .setDescription('trains infantry')
-                .addIntegerOption(option => option.setName('amount').setDescription('train multiple ships').setRequired(true))),
+                .setName('units')
+                .setDescription('trains units')
+                .addStringOption(option => option.setName('units').setDescription('select what unit to train').setRequired(true).addChoices(
+                    { name: 'infantry', value: 'infantry' },
+                    { name: 'tanks', value: 'tanks' },
+                    { name: 'planes', value: 'planes' },
+                    { name: 'ships', value: 'ships' },
+                ))
+                .addIntegerOption(option => option.setName('amount').setDescription('train multiple units').setRequired(true))),
     /*new SlashCommandBuilder()
                 .setName('trainoptions')
                 .setDescription('wooper-testing-bitches')
