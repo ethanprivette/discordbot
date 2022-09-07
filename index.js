@@ -125,12 +125,20 @@ client.on('interactionCreate', async interaction =>{
 });
 
 client.on('interactionCreate', async interaction =>{
-	testfunction()
+	if (!interaction.isChatInputCommand()) return;
+	
+	if (interaction.commandName === 'traintest') {
+		testfunction()
+	}
 });
 
-function testfunction() {
+client.on('interactionCreate', async interaction =>{
+	function testfunction() {
 	interaction.reply('test')
 };
+	
+});
+
 /*
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
