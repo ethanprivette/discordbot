@@ -55,6 +55,7 @@ const commands = [
                 .setName('infantry')
                 .setDescription('trains infantry')
                 .addIntegerOption(option => option.setName('amount').setDescription('train multiple infantry').setRequired(true)))
+                .addStringOption(option => option.setName('input').setDescription('test').setRequired(True)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('tanks')
