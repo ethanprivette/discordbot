@@ -134,7 +134,7 @@ client.on('interactionCreate', async interaction =>{
 
 client.on('interactionCreate', async interaction =>{
 	function testfunction() {
-	interaction.reply('test')
+	console.log('function successful');
 };
 	
 });
