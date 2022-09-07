@@ -172,7 +172,7 @@ client.on('interactionCreate', async interaction =>{
 		
 		
 	}
-        function testfunction(type, amount) {
+        function testfunction(type, amount, over) {
 	
 	console.log('function successful');
 	if (over === false) {
