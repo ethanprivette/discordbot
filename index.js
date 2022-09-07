@@ -129,17 +129,60 @@ client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
 	
 	if (interaction.commandName === 'traintest') {
+		var over;
 		const unitAmount = interaction.options.getInteger('amount');
 		const unitType = interaction.options.getString('units');
-		testfunction(unitType, unitAmount)
+		switch (unitType) {
+			case 'infantry' :
+				if (unitAmount >= 1001) {
+					testfunction(unitType, unitAmount, true)
+				} else {
+					testfunction(unitType, unitAmount, false)
+				}
+				break;
+			case 'tanks' :
+				if (unitAmount >= 9) {
+					testfunction(unitType, unitAmount, true)
+				} else {
+					testfunction(unitType, unitAmount, false)
+				}
+				break;
+			case 'planes' :
+				if (unitAmount >= 5) {
+					testfunction(unitType, unitAmount, true)
+				} else {
+					testfunction(unitType, unitAmount, false)
+				}
+				break;
+			case 'ships' :
+				if (unitAmount >= 2) {
+					testfunction(unitType, unitAmount, true)
+				} else {
+					testfunction(unitType, unitAmount, false)
+				}
+				break;
+			default:
+			break;
+				
+		}
+		
+		
+		
+		
+		
+		
 	}
         function testfunction(type, amount) {
 	
 	console.log('function successful');
-	console.log('you selected ' + amount + ' ' + type);
+	if (over === false) {
 	interaction.reply('you selected ' + amount + ' ' + type)
+	} else if (over === true) {
+	interaction.reply('you selected to many ' + type)	
+	}
 };
 
+	
 });
 
 
