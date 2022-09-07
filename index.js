@@ -127,8 +127,8 @@ client.on('interactionCreate', async interaction =>{
 function testfunction(type, amount) {
 	
 	console.log('function successful');
-	console.log('you selected ' amount + ' ' + type);
-	await interaction.reply('you selected ' amount + ' ' + type);
+	console.log('you selected ' + amount + ' ' + type);
+	await interaction.reply('you selected ' + amount + ' ' + type);
 };
 
 client.on('interactionCreate', async interaction =>{
