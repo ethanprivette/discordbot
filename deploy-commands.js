@@ -48,8 +48,31 @@ const commands = [
                     { name: 'Step 5', value: 'nuke labs' },
                 )),
     new SlashCommandBuilder()
+        .setName('traintest')
+        .setDescription('idk man')
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('infantry')
+                .setDescription('trains infantry')
+                .addIntegerOption(option => option.setName('amount').setDescription('train multiple infantry').setRequired(true)))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('tanks')
+                .setDescription('trains tanks')
+                .addIntegerOption(option => option.setName('amount').setDescription('train multiple tanks').setRequired(true)))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('planes')
+                .setDescription('trains infantry')
+                .addIntegerOption(option => option.setName('amount').setDescription('train multiple planes').setRequired(true)))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('ship')
+                .setDescription('trains infantry')
+                .addIntegerOption(option => option.setName('amount').setDescription('train multiple ships').setRequired(true))),
+    /*new SlashCommandBuilder()
                 .setName('trainoptions')
-                .setDescription('wooper tesing bitches')
+                .setDescription('wooper-testing-bitches')
                 .addStringOption(option =>
                     option.setName('Type')
                         .setDescription('Type')
@@ -66,7 +89,7 @@ const commands = [
                         .setRequired(true)
                         .addChoices(
                             { name: 'idk', value: 'help me'},
-                        )),
+                        )), */
 ]
 
     .map(command => command.toJSON());
