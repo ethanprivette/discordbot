@@ -123,6 +123,14 @@ client.on('interactionCreate', async interaction =>{
         interaction.reply(`@everyone \nEveryone but the Checks now dead from nuclear fallout.`)
     }
 });
+
+client.on('interactionCreate', async interaction =>{
+	testfunction()
+});
+
+function testfunction() {
+	interaction.reply('test')
+};
 /*
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
