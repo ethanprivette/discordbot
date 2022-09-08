@@ -79,7 +79,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 /*
-Test
+
 */
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
