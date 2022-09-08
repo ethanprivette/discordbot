@@ -5,6 +5,7 @@ const { Sequelize, Transaction } = require('sequelize');
 const talkedRecently = new Set(); 
 global.cooldown = 10000;
 
+//sequelize//
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: 'path/to/database.sqlite'
@@ -17,6 +18,27 @@ try {
     console.error('Unable to connect to the database:', error);
   }
 
+const Tags = sequelize.define('tags', {
+    name: {
+        type: Sequelize.STRING,
+        unique: true,
+    },
+    description: Sequelize.TEXT,
+    username: Sequelize.STRING,
+    usage_count: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+    },
+});
+
+client.once('ready', () => {
+	Tags.sync();
+
+	console.log(`Logged in as ${client.user.tag}!`);
+});
+
+//sequelize//
 const client = new Client({
     allowedMentions: {
         parse: [`users`, `roles`, `everyone`],
@@ -79,7 +101,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 /*
-testing
+testin
 */
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
