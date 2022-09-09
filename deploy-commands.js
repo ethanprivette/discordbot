@@ -49,6 +49,12 @@ rest.put(Routes.applicationCommands('1009293626951598181'), { body: commands })
 // ADMIN COMMANDS
 const admincommands = [
         new SlashCommandBuilder().setName('admintest').setDescription('testing command for admins'),
+        new ShashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
+        new ShashCommandBuilder()
+        .setName('addtag')
+        .setDescription('adding tags')
+        .addStringOption(options => options.setName('name').setDescripton('tagname').setRequired(true))
+        .addStringOption(option => option.setName('description').setDescripton('tagdescription').setRequired(true)),
     ]
     
         .map(command => command.toJSON());
