@@ -167,12 +167,6 @@ client.on('interactionCreate', async interaction =>{
 			break;
 				
 		}
-		
-		
-		
-		
-		
-		
 	}
         function testfunction(type, amount, over) {
 	
@@ -180,7 +174,7 @@ client.on('interactionCreate', async interaction =>{
 	if (over === false) {
 	interaction.reply('you selected ' + amount + ' ' + type)
 	} else if (over === true) {
-	interaction.reply('you selected to many ' + type)	
+	interaction.reply('you selected too many ' + type)	
 	}
 };
 
