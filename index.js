@@ -159,7 +159,7 @@ client.on('interactionCreate', async interaction =>{
 		switch (unitType) {
 			case 'infantry' :
 				if (unitAmount <= 999 >= 20001) {
-                    unitCooldown = 1800*unitAmount
+                    unitCooldown = 1800*unitAmount;
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
@@ -167,7 +167,7 @@ client.on('interactionCreate', async interaction =>{
 				break;
 			case 'tanks' :
 				if (unitAmount >= 9) {
-                    unitCooldown = 262500*unitAmount
+                    unitCooldown = 262500*unitAmount;
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
@@ -175,7 +175,7 @@ client.on('interactionCreate', async interaction =>{
 				break;
 			case 'planes' :
 				if (unitAmount >= 5) {
-                    unitCooldown = 900000*unitAmount
+                    unitCooldown = 900000*unitAmount;
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
@@ -183,7 +183,7 @@ client.on('interactionCreate', async interaction =>{
 				break;
 			case 'ships' :
 				if (unitAmount >= 2) {
-                    unitCooldown = 10800000
+                    unitCooldown = 10800000;
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
@@ -197,7 +197,7 @@ client.on('interactionCreate', async interaction =>{
         function testfunction(type, amount, over) {
 	
 	console.log('function successful');
-    console.log(`Current cooldown: ${unitCooldown/60000}`)
+    console.log(`Current cooldown: ${unitCooldown/60000}`);
 	if (over === false) {
 	interaction.reply('you selected ' + amount + ' ' + type)
 	} else if (over === true) {
