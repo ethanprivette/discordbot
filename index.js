@@ -6,6 +6,14 @@ const talkedRecently = new Set();
 global.cooldown = 10000;
 
 //sequelize//
+const client = new Client({
+    allowedMentions: {
+        parse: [`users`, `roles`, `everyone`],
+        repliedUser: true,
+    },
+    intents: [botIntents],
+});
+
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: 'path/to/database.sqlite'
@@ -36,15 +44,6 @@ client.once('ready', () => {
 	Tags.sync();
 
 	console.log(`Logged in as ${client.user.tag}!`);
-});
-
-//sequelize//
-const client = new Client({
-    allowedMentions: {
-        parse: [`users`, `roles`, `everyone`],
-        repliedUser: true,
-    },
-    intents: [botIntents],
 });
 
 client.on("ready", () => {
@@ -169,7 +168,7 @@ client.on('interactionCreate', async interaction =>{
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
-				}
+				} 
 				break;
 			case 'planes' :
 				if (unitAmount >= 5) {
