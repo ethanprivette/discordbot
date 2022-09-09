@@ -155,7 +155,7 @@ client.on('interactionCreate', async interaction =>{
 		var over;
 		const unitAmount = interaction.options.getInteger('amount');
 		const unitType = interaction.options.getString('units');
-        global.unitCooldown = 0
+        global.unitCooldown = 60000;
 		switch (unitType) {
 			case 'infantry' :
 				if (unitAmount <= 999 >= 20001) {
