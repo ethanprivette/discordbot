@@ -1,7 +1,6 @@
 {
   "name": "warbot",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,5 +14,15 @@
     "mysql2": "^2.3.3",
     "sequelize": "^6.21.4",
     "sqlite3": "^5.0.11"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethanprivette/discordbot.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/ethanprivette/discordbot/issues"
+  },
+  "homepage": "https://github.com/ethanprivette/discordbot#readme",
+  "description": ""
 }
