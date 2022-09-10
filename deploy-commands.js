@@ -51,10 +51,10 @@ const admincommands = [
         new SlashCommandBuilder().setName('admintest').setDescription('testing command for admins'),
         new SlashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
         new SlashCommandBuilder()
-        .setName('addtag')
-        .setDescription('adding tags')
-        .addStringOption(options => options.setName('name').setDescripton('tagname').setRequired(true))
-        .addStringOption(option => option.setName('description').setDescripton('tagdescription').setRequired(true)),
+            .setName('addtag')
+            .setDescription('adding tags')
+            .addStringOption(option => option.setName('name').setDescription('tagname').setRequired(true))
+            .addStringOption(option => option.setName('description').setDescription('tagdescription').setRequired(true)),
     ]
     
         .map(command => command.toJSON());
