@@ -163,13 +163,31 @@ client.on('interactionCreate', async interaction =>{
 	
 	if (interaction.commandName === 'traintest') {
 		var over;
-		const unitAmount = interaction.options.getInteger('amount');
-		const unitType = interaction.options.getString('units');
+        const tagName = 'train'
+		const unitAmount = interaction.options.getInteger('amount'); //tag amount
+		const unitType = interaction.options.getString('units'); //tag description
 		switch (unitType) {
 			case 'infantry' :
 				if (unitAmount <= 999 >= 20001) {
                     unitCooldown = 1800*unitAmount;
 					testfunction(unitType, unitAmount, true)
+                    try {
+                        const tag = await Tags.create({
+                            name: tagName,
+                            description: unitType,
+                            username: interaction.user.username,
+                            usage_count: unitAmount,
+                        });
+
+                        return interaction.reply(`Tag ${tag.name} added.`);
+                    }
+                    catch (error) {
+                        if (error.name === 'SequelizeUniqueConstraintError') {
+                            return interaction.reply('That tag already exists.');
+                        }
+            
+                        return interaction.reply('Something went wrong with adding a tag.');
+                    }
 				} else {
 					testfunction(unitType, unitAmount, false)
 				}
