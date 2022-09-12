@@ -9,7 +9,7 @@ global.unitCooldown = 60000;
 //log function test
 function log(msg) {
 	console.log(msg);
-	const channel = member.guide.channels.cache.find(ch => ch.name === 'console-log');
+	const channel = member.guide.channels.cache.get('1017927935488966697');
 	if (!channel) return;
 	channel.send(msg);
 }
