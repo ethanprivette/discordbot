@@ -51,7 +51,25 @@ client.on("ready", () => {
     console.log("Bot is online");
 });
 
+function addTag(tagName ,tagDescription) {
+    try {
+        // equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
+        const tag = Tags.create({
+            name: tagName,
+            description: tagDescription,
+            username: interaction.user.username,
+        });
 
+        return interaction.reply(`tag ${tag.tagname} added.`);
+    }
+    catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return interaction.reply('That tag already exists.');
+        }
+
+        return interaction.reply('Something went wrong with adding a tag.');
+    }
+}
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
@@ -171,23 +189,7 @@ client.on('interactionCreate', async interaction =>{
 				if (unitAmount <= 999 >= 20001) {
                     unitCooldown = 1800*unitAmount;
 					testfunction(unitType, unitAmount, true)
-                    try {
-                        const tag = await Tags.create({
-                            name: tagName,
-                            description: unitType,
-                            username: interaction.user.username,
-                            usage_count: unitAmount,
-                        });
-
-                        return interaction.reply(`Tag ${tag.name} added.`);
-                    }
-                    catch (error) {
-                        if (error.name === 'SequelizeUniqueConstraintError') {
-                            return interaction.reply('That tag already exists.');
-                        }
-            
-                        return interaction.reply('Something went wrong with adding a tag.');
-                    }
+                    addTag(tagName, unitType)
 				} else {
 					testfunction(unitType, unitAmount, false)
 				}
