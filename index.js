@@ -51,7 +51,7 @@ client.on("ready", () => {
     console.log("Bot is online");
 });
 
-function addTag(tagName ,tagDescription) {
+function addTag(tagName ,tagDescription, interaction) {
     try {
         // equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
         const tag = Tags.create({
@@ -189,7 +189,7 @@ client.on('interactionCreate', async interaction =>{
 				if (unitAmount <= 999 >= 20001) {
                     unitCooldown = 1800*unitAmount;
 					testfunction(unitType, unitAmount, true)
-                    addTag(tagName, unitType)
+                    addTag(tagName, unitType, interaction)
 				} else {
 					testfunction(unitType, unitAmount, false)
 				}
