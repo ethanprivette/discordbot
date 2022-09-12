@@ -4,6 +4,7 @@ const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction } = require('sequelize');
 const talkedRecently = new Set(); 
 global.cooldown = 10000;
+global.unitCooldown = 60000;
 
 //sequelize//
 const client = new Client({
@@ -164,11 +165,10 @@ client.on('interactionCreate', async interaction =>{
 		var over;
 		const unitAmount = interaction.options.getInteger('amount');
 		const unitType = interaction.options.getString('units');
-        global.unitCooldown = 60000;
 		switch (unitType) {
 			case 'infantry' :
 				if (unitAmount <= 999 >= 20001) {
-                    unitCooldown = 1800*unitAmount;
+                    unitCooldown = 1800*unitAmount
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
@@ -176,7 +176,7 @@ client.on('interactionCreate', async interaction =>{
 				break;
 			case 'tanks' :
 				if (unitAmount >= 9) {
-                    unitCooldown = 262500*unitAmount;
+                    unitCooldown = 262500*unitAmount
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
@@ -184,7 +184,7 @@ client.on('interactionCreate', async interaction =>{
 				break;
 			case 'planes' :
 				if (unitAmount >= 5) {
-                    unitCooldown = 900000*unitAmount;
+                    unitCooldown = 900000*unitAmount
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
@@ -192,7 +192,7 @@ client.on('interactionCreate', async interaction =>{
 				break;
 			case 'ships' :
 				if (unitAmount >= 2) {
-                    unitCooldown = 10800000;
+                    unitCooldown = 10800000*unitAmount
 					testfunction(unitType, unitAmount, true)
 				} else {
 					testfunction(unitType, unitAmount, false)
