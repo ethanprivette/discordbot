@@ -6,6 +6,23 @@ const talkedRecently = new Set();
 global.cooldown = 10000;
 global.unitCooldown = 60000;
 
+//log function test
+function log(msg) {
+    console.log(msg);
+    client.on('ready', client => {
+        const channel = client.channels.fetch('1017927935488966697');
+            channel.then(channel=>channel.send(msg))
+    })
+}
+
+function Error(msg, errormsg) {
+    console.error(msg, errormsg);
+    client.on('ready', client => {
+        const channel = client.channels.fetch('1017927935488966697');
+            channel.then(channel=>channel.send(msg))
+    })
+}
+    //
 
 //sequelize//
 const client = new Client({
@@ -23,10 +40,12 @@ const sequelize = new Sequelize({
 
 try {
     sequelize.authenticate();
-    console.log('Connection has been established successfully.');
+    log('Connection has been established successfully.')
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    Error('Unable to connect to the database:', error)
   }
+
+
 
 const Tags = sequelize.define('tags', {
     name: {
@@ -41,26 +60,16 @@ const Tags = sequelize.define('tags', {
         allowNull: false,
     },
 });
-//log function test
-function log(msg) {
-    console.log(msg);
-    client.on('ready', client => {
-        client.channels.fetch('1017927935488966697')
-            .then(channel=>channel.send(msg))
-    })
-}
-    //
-    
-log('logger test')
+
     
 client.once('ready', () => {
 	Tags.sync();
 
-	console.log(`Logged in as ${client.user.tag}!`);
+	log(`Logged in as ${client.user.tag}!`)
 });
 
 client.on("ready", () => {
-    console.log("Bot is online");
+    log("Bot is online")
 });
 
 function addTag(tagName ,tagDescription, interaction) {
@@ -237,8 +246,8 @@ client.on('interactionCreate', async interaction =>{
 	}
         function testfunction(type, amount, over) {
 	
-	console.log('function successful');
-    console.log(`Current cooldown: ${unitCooldown/60000}`);
+	log('function successful');
+    log(`Current cooldown: ${unitCooldown/60000}`);
 	if (over === false) {
 	interaction.reply('you selected ' + amount + ' ' + type)
 	} else if (over === true) {
