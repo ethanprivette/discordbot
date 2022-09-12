@@ -6,6 +6,17 @@ const talkedRecently = new Set();
 global.cooldown = 10000;
 global.unitCooldown = 60000;
 
+//log function test
+function log(msg) {
+	console.log(msg);
+	const channel = member.guide.channels.cache.find(ch => ch.name === 'console-log');
+	if (!channel) return;
+	channel.send(msg);
+}
+//
+
+log('logger test')
+
 //sequelize//
 const client = new Client({
     allowedMentions: {
