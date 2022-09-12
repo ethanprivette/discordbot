@@ -6,16 +6,6 @@ const talkedRecently = new Set();
 global.cooldown = 10000;
 global.unitCooldown = 60000;
 
-//log function test
-function log(msg) {
-	console.log(msg);
-	const channel = member.guide.channels.cache.get('1017927935488966697');
-	if (!channel) return;
-	channel.send(msg);
-}
-//
-
-log('logger test')
 
 //sequelize//
 const client = new Client({
@@ -51,7 +41,18 @@ const Tags = sequelize.define('tags', {
         allowNull: false,
     },
 });
-
+//log function test
+function log(msg) {
+    console.log(msg);
+    client.on('ready', client => {
+        client.channels.fetch('1017927935488966697')
+            .then(channel=>channel.send(msg))
+    })
+}
+    //
+    
+log('logger test')
+    
 client.once('ready', () => {
 	Tags.sync();
 
