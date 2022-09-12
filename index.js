@@ -244,6 +244,49 @@ client.on('interactionCreate', async interaction => {
 			return interaction.reply('Something went wrong with adding a tag.');
 		}
 	}
+    else if (commandName === 'fetchtag') {
+        const tagName = interaction.options.getString('name');
+    
+        // equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
+        const tag = await Tags.findOne({ where: { name: tagName } });
+    
+        if (tag) {
+            // equivalent to: UPDATE tags SET usage_count = usage_count + 1 WHERE name = 'tagName';
+            tag.increment('usage_count');
+    
+            return interaction.reply(tag.get('description'));
+        }
+    
+        return interaction.reply(`Could not find tag: ${tagName}`);
+    }
+    else if (commandName == 'taginfo') {
+        const tagName = interaction.options.getString('name');
+    
+        // equivalent to: SELECT * FROM tags WHERE name = 'tagName' LIMIT 1;
+        const tag = await Tags.findOne({ where: { name: tagName } });
+    
+        if (tag) {
+            return interaction.reply(`${tagName} was created by ${tag.username} at ${tag.createdAt} and has been used ${tag.usage_count} times.`);
+        }
+    
+        return interaction.reply(`Could not find tag: ${tagName}`);
+    }
+    else if (commandName === 'showtags') {
+        // equivalent to: SELECT name FROM tags;
+        const tagList = await Tags.findAll({ attributes: ['name'] });
+        const tagString = tagList.map(t => t.name).join(', ') || 'No tags set.';
+    
+        return interaction.reply(`List of tags: ${tagString}`);
+    }
+    else if (commandName === 'deletetag') {
+        const tagName = interaction.options.getString('name');
+        // equivalent to: DELETE from tags WHERE name = ?;
+        const rowCount = await Tags.destroy({ where: { name: tagName } });
+    
+        if (!rowCount) return interaction.reply('That tag doesn\'t exist.');
+    
+        return interaction.reply('Tag deleted.');
+    }
 });
 
 

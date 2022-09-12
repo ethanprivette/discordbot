@@ -43,7 +43,7 @@ const commands = [
 const rest = new REST({ version: '10' }).setToken(token);
 
 rest.put(Routes.applicationCommands('1009293626951598181'), { body: commands })
-    .then(() => console.log('Successfully registered application commands.'))
+    .then(() => console.log('Successfully registered global commands.'))
     .catch(console.error);
 
 // ADMIN COMMANDS
@@ -55,6 +55,22 @@ const admincommands = [
             .setDescription('adding tags')
             .addStringOption(option => option.setName('name').setDescription('tagname').setRequired(true))
             .addStringOption(option => option.setName('description').setDescription('tagdescription').setRequired(true)),
+            new SlashCommandBuilder()
+                .setName('fetchtag')
+                .setDescription('fetches a tag')
+                .addStringOption(option => option.setName('name').setDescription('select a tag to fetch').setRequired(true)),
+            new SlashCommandBuilder()
+                .setName('taginfo')
+                .setDescription('displays a tag\'s info')
+                .addStringOption(option => option.setName('name').setDescription('displays info on the selected tag').setRequired(true)),
+            new SlashCommandBuilder()
+                .setName('showtags')
+                .setDescription('displays all created tags'),
+            new SlashCommandBuilder()
+                .setName('deletetag')
+                .setDescription('deleted selected tag')
+                .addStringOption(option => option.setName('name').setDescription('deletes selected tag').setRequired(true)),
+
     ]
     
         .map(command => command.toJSON());
@@ -62,5 +78,5 @@ const admincommands = [
     const rest1 = new REST({ version: '10' }).setToken(token);
     
     rest1.put(Routes.applicationGuildCommands('1009293626951598181', '1017418336293896214'), { body: admincommands })
-        .then(() => console.log('Successfully registered application commands.'))
+        .then(() => console.log('Successfully registered admin commands.'))
         .catch(console.error);
