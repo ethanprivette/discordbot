@@ -13,6 +13,9 @@ function log(msg) {
         const channel = client.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
     })
+    
+    const channel = client.channels.fetch('1017927935488966697');
+            channel.then(channel=>channel.send(msg))
 }
 
 function logerror(msg, errormsg) {
