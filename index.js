@@ -15,7 +15,7 @@ function log(msg) {
     })
 }
 
-function Error(msg, errormsg) {
+function logerror(msg, errormsg) {
     console.error(msg, errormsg);
     client.on('ready', client => {
         const channel = client.channels.fetch('1017927935488966697');
@@ -42,7 +42,7 @@ try {
     sequelize.authenticate();
     log('Connection has been established successfully.')
   } catch (error) {
-    Error('Unable to connect to the database:', error)
+    logerror('Unable to connect to the database:', error)
   }
 
 
