@@ -1,8 +1,10 @@
 const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength } = require('discord.js');
+const { Client, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength } = require('./errorlog');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction } = require('sequelize');
 const talkedRecently = new Set(); 
+
 global.cooldown = 10000;
 global.unitCooldown = 60000;
 const client = new Client({
@@ -33,6 +35,7 @@ function logerror(msg, errormsg) {
 }
 */
 
+/*
 con = {
    log: function(msg) {
 		console.log(msg);
@@ -49,7 +52,7 @@ con = {
 		};
    }
 }
-	   
+*/
 
 			  
     //
