@@ -9,8 +9,8 @@ global.unitCooldown = 60000;
 //log function test
 function log(msg) {
     console.log(msg);
-    client.on('ready', client => {
-        const channel = client.channels.fetch('1017927935488966697');
+    client.on('ready', test => {
+        const channel = test.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
     })
     
