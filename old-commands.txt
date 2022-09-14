@@ -1,0 +1,295 @@
+   first edition slashcommand
+
+   //new SlashCommandBuilder().setName('train').setDescription('Trains units.'),
+
+    first edition reply command
+
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+
+	const { commandName } = interaction;
+
+	if (commandName === 'train') {
+        if (talkedRecently.has(interaction.user.clientId)){
+            interaction.reply({ content: 'Units are already being trained \nPlease wait ' + (cooldown/60000) + ' minutes before training again.'});
+        } else {
+            const row1 = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('Infantry')
+                        .setLabel('Infantry')
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId('Tanks')
+                        .setLabel('Tanks')
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId('Planes')
+                        .setLabel('Planes')
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId('Navy')
+                        .setLabel('Navy')
+                        .setStyle(ButtonStyle.Primary),
+                );
+                await interaction.reply({ content: 'Which unit would you like to train?', ephemeral: true, components: [row1]});
+                }
+            talkedRecently.add(interaction.user.clientId);
+            setTimeout(() => {
+                talkedRecently.delete(interaction.user.clientId);
+            }, cooldown);
+        }
+});
+
+client.on('interactionCreate', async interaction =>{
+    if (!interaction.isButton()) return;
+
+    if (interaction.customId == 'Infantry'){
+        const row2 = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('1k Infantry')
+                .setLabel('1k Infantry')
+                .setStyle(ButtonStyle.Primary)
+        );
+            await interaction.reply({ content: 'How many Infantry would you like to train?', ephemeral: true, components: [row2]})
+    }else if (interaction.customId == 'Tanks'){
+        const row3 = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('8 Tanks')
+                .setLabel('8 Tanks')
+                .setStyle(ButtonStyle.Primary),
+        );
+            await interaction.reply({ content: 'How many Tanks would you like to train?', ephemeral: true, components: [row3]})
+
+    }else if (interaction.customId == 'Planes'){
+        const row4 = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('4 Planes')
+                .setLabel('4 Planes')
+                .setStyle(ButtonStyle.Primary),
+        );
+            await interaction.reply({ content: 'How many Planes would you like to train?', ephemeral: true, components: [row4]})
+    
+    }else if (interaction.customId == 'Navy'){
+        const row5 = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('1 Ship')
+                .setLabel('1 Ship')
+                .setStyle(ButtonStyle.Primary),
+        );
+            await interaction.reply({ content: 'How many ships would you like to train?', ephemeral: true, components: [row5]})
+    }
+});
+
+client.on('interactionCreate', async interaction =>{
+    if (!interaction.isButton()) return;
+
+    if (interaction.customId == '1k Infantry'){
+        await interaction.reply('Infantry will be ready in 30 minutes.')
+        cooldown = 1800000
+    }else if (interaction.customId == '8 Tanks'){
+        await interaction.reply('Tanks will be ready in 35 minutes.')
+        cooldown = 2100000
+    }else if (interaction.customId == '4 Planes'){
+        await interaction.reply('Planes will be ready in 1 hour.')
+        cooldown = 3600000
+    }else if (interaction.customId == '1 Ship'){
+        await interaction.reply('Ship will be ready in 3 hours.')
+        cooldown = 10800000
+    }
+});
+   
+    Newest edition slashcommand
+
+    new SlashCommandBuilder()
+        .setName('train')
+        .setDescription('Trains units.')
+        .addStringOption(option =>
+            option.setName('unit')
+                .setDescription('Subcommand for training units.')
+                .setRequired(true)
+                .addChoices(
+                    { name: '1k infantry', value: '1k infantry' },
+                    { name: '5k infantry', value: '5k infantry' },
+                    { name: '10k infantry', value: '10k infantry' },
+                    { name: '20k infantry', value: '20k infantry' },
+                    { name: '8 tanks', value: '4 tanks' },
+                    { name: '40 tanks', value: '20 tanks' },
+                    { name: '80 tanks', value: '40 tanks' },
+                    { name: '160 tanks', value: '80 tanks' },
+                    { name: '4 planes', value: '4 planes' },
+                    { name: '20 planes', value: '20 planes' },
+                    { name: '40 planes', value: '40 planes' },
+                    { name: '80 planes', value: '80 planes' },
+                    { name: '1 ship', value: '1 ship' },
+                    { name: '5 ships', value: '5 ships' },
+                    { name: '10 ships', value: '10 ships' },
+                    { name: '20 ships', value: '20 ships' },
+                )), 
+
+    Newest reply command
+
+client.on('interactionCreate', async interaction =>{
+    if (!interaction.isChatInputCommand()) return;
+
+    const unitAmount = interaction.options.getInteger('amount');
+    global.trainCooldown = 0
+
+    if (interaction.commandName === 'traintest') {
+        if (interaction.options.getSubcommand() === 'infantry') {
+            trainCooldown = 1800000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Infantry is already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+            await interaction.reply(`Infantry will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() =>{
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        } else if (interaction.options.getSubcommand() === 'tanks') {
+            trainCooldown = 2100000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Tanks are already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+                await interaction.reply(`Tanks will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() =>{
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        } else if (interaction.options.getSubcommand() === 'planes') {
+            trainCooldown = 3600000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Planes are already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+                await interaction.reply(`Planes will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() =>{
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        } else if (interaction.options.getSubcommand() === 'ship') {
+            trainCooldown = 10800000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Ships are already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+                await interaction.reply(`Ships will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() =>{
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        }
+    }
+}) 
+
+    i dont even know anymore
+
+client.on('interactionCreate', async interaction =>{
+	if (!interaction.isChatInputCommand()) return;
+
+    global.unitCooldown = 10000
+    const selectedunit = interaction.options.getString('unit');
+
+    if (selectedunit === '1k infantry') {
+        unitCooldown = 1800000
+    } else if (selectedunit === '5k infantry') {
+        unitCooldown = 1800000*5
+    } else if (selectedunit === '10k infantry') {
+        unitCooldown = 1800000*10
+    } else if (selectedunit === '20k infantry') {
+        unitCooldown = 1800000*20
+    } else if (selectedunit === '8 tanks') {
+        unitCooldown = 2100000
+    } else if (selectedunit === '40 tanks') {
+        unitCooldown = 2100000*5
+    } else if (selectedunit === '80 tanks') {
+        unitCooldown = 2100000*10
+    } else if (selectedunit === '160 tanks') {
+        unitCooldown = 2100000*20
+    } else if (selectedunit === '4 planes') {
+        unitCooldown = 3600000
+    } else if (selectedunit === '20 planes') {
+        unitCooldown = 3600000*5
+    } else if (selectedunit === '40 planes') {
+        unitCooldown = 3600000*10
+    } else if (selectedunit === '80 planes') {
+        unitCooldown = 3600000*20
+    } else if (selectedunit === '1 ship') {
+        unitCooldown = 10800000
+    } else if (selectedunit === '5 ships') {
+        unitCooldown = 10800000*5
+    } else if (selectedunit === '10 ships') {
+        unitCooldown = 10800000*10
+    } else if (selectedunit === '20 ships') {
+        unitCooldown = 10800000*20
+    }
+
+	const minutesUnitCooldown = unitCooldown/60000
+
+	if (interaction.commandName === 'train') {
+        if (talkedRecently.has(interaction.user.clientId)){
+            await interaction.reply(`${selectedunit} are already being trained come back in ${minutesUnitCooldown} minutes.`)
+        } else {
+            await interaction.reply(`you have selected ${selectedunit}, they will be ready in ${minutesUnitCooldown} minutes.`);
+        }
+        talkedRecently.add(interaction.user.clientId);
+        setTimeout (() => {
+            talkedRecently.delete(interaction.user.clientId);
+        }, unitCooldown );
+	}
+});
+
+    OLD TRAIN COMMAND
+
+client.on('interactionCreate', async interaction =>{
+    if (!interaction.isChatInputCommand()) return;
+
+    const unitAmount = interaction.options.getInteger('amount');
+    global.trainCooldown = 0
+
+    if (interaction.commandName === 'traintest') {
+        if (interaction.options.getString('units') === 'infantry') {
+            trainCooldown = 1800000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Infantry is already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+            await interaction.reply(`Infantry will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() =>{
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        } else if (interaction.options.getString('units') === 'tanks') {
+            trainCooldown = 2100000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Tanks are already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+                await interaction.reply(`Tanks will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() =>{
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        } else if (interaction.options.getString('units') === 'planes') {
+            trainCooldown = 3600000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Planes are already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+                await interaction.reply(`Planes will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() => {
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        } else if (interaction.options.getString('units') === 'ships') {
+            trainCooldown = 10800000*unitAmount
+            if (talkedRecently.has(interaction.user.clientId)){
+                await interaction.reply(`Ships are already being trained come back in ${trainCooldown/60000} minutes.`)
+            } else {
+                await interaction.reply(`Ships will be ready in ${trainCooldown/60000} minutes.`)
+            } talkedRecently.add(interaction.user.clientId);
+            setTimeout(() => {
+                talkedRecently.delete(interaction.user.clientId);
+            }, trainCooldown );
+        }
+    }
+})
