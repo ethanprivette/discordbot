@@ -16,14 +16,15 @@ const client = new Client({
 //log function test
 function log(msg) {
     console.log(msg);
-/*
+
     client.on('ready', client => {
         const channel = client.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
     })
-*/
+/*
     const channel = client.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
+*/
 }
 
 function logerror(msg, errormsg) {
