@@ -5,12 +5,19 @@ const { Sequelize, Transaction } = require('sequelize');
 const talkedRecently = new Set(); 
 global.cooldown = 10000;
 global.unitCooldown = 60000;
+const client = new Client({
+    allowedMentions: {
+        parse: [`users`, `roles`, `everyone`],
+        repliedUser: true,
+    },
+    intents: [botIntents],
+});
 
 //log function test
 function log(msg) {
     console.log(msg);
-    client.on('ready', test => {
-        const channel = test.channels.fetch('1017927935488966697');
+    client.on('ready', client => {
+        const channel = client.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
     })
 }
@@ -25,13 +32,6 @@ function logerror(msg, errormsg) {
     //
 
 //sequelize//
-const client = new Client({
-    allowedMentions: {
-        parse: [`users`, `roles`, `everyone`],
-        repliedUser: true,
-    },
-    intents: [botIntents],
-});
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
