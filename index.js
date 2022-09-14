@@ -13,9 +13,6 @@ function log(msg) {
         const channel = test.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
     })
-    
-    const channel = client.channels.fetch('1017927935488966697');
-            channel.then(channel=>channel.send(msg))
 }
 
 function logerror(msg, errormsg) {
@@ -62,17 +59,16 @@ const Tags = sequelize.define('tags', {
         defaultValue: 0,
         allowNull: false,
     },
-});
+});   
 
-    
-client.once('ready', () => {
+client.once('ready', client => {
 	Tags.sync();
 
 	log(`Logged in as ${client.user.tag}!`)
 });
 
-client.on("ready", () => {
-    log("Bot is online")
+client.on('ready', client => {
+    log('Bot is online')
 });
 
 function addTag(tagName ,tagDescription, interaction) {
