@@ -35,12 +35,23 @@ function logerror(msg, errormsg) {
 
 con = {
    log: function(msg) {
-
-   }
-   error: function(msg, error) {
-
+		console.log(msg);
+		client.on('ready', client => {
+        const channel = client.channels.fetch('1017927935488966697');
+            channel.then(channel=>channel.send(msg))
+		};
+	},
+   error: function(msg, errormsg) {
+		console.error(msg, errormsg);
+		client.on('ready', client => {
+			const channel = client.channels.fetch('1017927935488966697');
+				channel.then(channel=>channel.send(msg, errormsg))
+		};
    }
 }
+	   
+
+			  
     //
 
 //sequelize//
@@ -52,9 +63,9 @@ const sequelize = new Sequelize({
 
 try {
     sequelize.authenticate();
-    log('Connection has been established successfully.')
+    con.log('Connection has been established successfully.')
   } catch (error) {
-    logerror('Unable to connect to the database:', error)
+    con.error('Unable to connect to the database:', error)
   }
 
 
@@ -76,11 +87,11 @@ const Tags = sequelize.define('tags', {
 client.once('ready', client => {
 	Tags.sync();
 
-	log(`Logged in as ${client.user.tag}!`)
+	con.log(`Logged in as ${client.user.tag}!`)
 });
 
 client.on('ready', client => {
-    log('Bot is online')
+    con.log('Bot is online')
 });
 
 function addTag(tagName ,tagDescription, interaction) {
@@ -257,8 +268,8 @@ client.on('interactionCreate', async interaction =>{
 	}
         function testfunction(type, amount, over) {
 	
-	log('function successful');
-    log(`Current cooldown: ${unitCooldown/60000}`);
+	con.log('function successful');
+    con.log(`Current cooldown: ${unitCooldown/60000}`);
 	if (over === false) {
 	interaction.reply('you selected ' + amount + ' ' + type)
 	} else if (over === true) {
