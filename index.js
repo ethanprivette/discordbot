@@ -14,6 +14,7 @@ const client = new Client({
 });
 
 //log function test
+/*
 function log(msg) {
     console.log(msg);
 
@@ -21,10 +22,6 @@ function log(msg) {
         const channel = client.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
     })
-/*
-    const channel = client.channels.fetch('1017927935488966697');
-            channel.then(channel=>channel.send(msg))
-*/
 }
 
 function logerror(msg, errormsg) {
@@ -33,6 +30,16 @@ function logerror(msg, errormsg) {
         const channel = client.channels.fetch('1017927935488966697');
             channel.then(channel=>channel.send(msg))
     })
+}
+*/
+
+con = {
+   log: function(msg) {
+
+   }
+   error: function(msg, error) {
+
+   }
 }
     //
 
