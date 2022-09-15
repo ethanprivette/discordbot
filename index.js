@@ -59,12 +59,12 @@ function log(msg, key) {
 	if (key === undefined) {
 		client.on('ready', client => {
 			const channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(now.toUTCString(),' : ',msg))
-		};
-	} else {
+				channel.then(channel=>channel.send(`${now.toUTCString()} : ${msg}`))})
+
+    } else {
 		var client = key;
 		var channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(now.toUTCString(),' : ',msg))
+				channel.then(channel=>channel.send(`${now.toUTCString()} : ${msg}`))
 	}
 }
 
