@@ -7,7 +7,7 @@ const commands = [
     new SlashCommandBuilder().setName('ping').setDescription('replies with pong.'),
     new SlashCommandBuilder().setName('big_red_button').setDescription('nukes everyone'),
     new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
-    new SlashCommandBuilder().setName('embedtest').setDescription('Testing embeds rn leave me alone.'),
+    new SlashCommandBuilder().setName('fuckyou').setDescription('fuck you'),
     new SlashCommandBuilder()
         .setName('build')
         .setDescription('Builds infrastructure')

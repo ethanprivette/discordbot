@@ -108,6 +108,19 @@ client.once('ready', client => {
 	log(`Logged in as ${client.user.tag}!`, client)
 });
 
+const adminIDs = [601077405481828362, 338080523886919680]
+
+client.once('ready', client => {
+	if (!interaction.isChatInputCommand()) return;
+    const { commandName } = interaction;
+
+    if (commandName === 'fuckyou') {
+        if (adminIDs.include(client.author.id)) {
+            return interaction.reply('Fuck You');
+        }
+    }
+});
+
 client.on('ready', client => {
     log('Bot is online', client)
 });
