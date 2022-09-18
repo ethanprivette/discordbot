@@ -207,16 +207,12 @@ client.once('ready', client => {
 	log(`Logged in as ${client.user.tag}!`, client)
 });
 
-const adminIDs = [601077405481828362, 338080523886919680]
-
-client.once('ready', client => {
+client.on('interactionCreate', async interaction => {
 	if (!interaction.isChatInputCommand()) return;
     const { commandName } = interaction;
 
     if (commandName === 'fuckyou') {
-        if (adminIDs.include(client.author.id)) {
-            return interaction.reply('Fuck You');
-        }
+        await interaction.reply('@everyone Fuck You');
     }
 });
 
@@ -345,14 +341,6 @@ client.on('interactionCreate', async interaction =>{
 	
     if (interaction.commandName === 'big_red_button') {
         interaction.reply(`@everyone \nEveryone but the Checks now dead from nuclear fallout.`)
-    }
-});
-
-client.on('interactionCreate', async interaction =>{
-    if (!interaction.isChatInputCommand()) return;
-
-    if (interaction.commandName === 'fuckyou') {
-        interaction.reply(`@everyone fuck you`)
     }
 });
 
