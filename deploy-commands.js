@@ -36,6 +36,12 @@ const commands = [
                     { name: 'ships', value: 'ships' },
                 ))
                 .addIntegerOption(option => option.setName('amount').setDescription('train multiple units').setRequired(true))),
+    new SlashCommandBuilder().setName('balance').setDescription('checks users balance'),
+    new SlashCommandBuilder().setName('inventory').setDescription('shows users inventory'),
+    new SlashCommandBuilder().setName('transfer').setDescription('transfer energy to another user'),
+    new SlashCommandBuilder().setName('buy').setDescription('buys an item from the shop'),
+    new SlashCommandBuilder().setName('shop').setDescription('displays the item shop'),
+    new SlashCommandBuilder().setName('leaderboard').setDescription('shows the leaderboard'),
 ]
 
     .map(command => command.toJSON());
