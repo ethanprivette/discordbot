@@ -348,6 +348,13 @@ client.on('interactionCreate', async interaction =>{
     }
 });
 
+client.on('interactionCreate', async interaction =>{
+    if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName === 'fuckyou') {
+        interaction.reply(`@everyone fuck you`)
+    }
+});
 
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
