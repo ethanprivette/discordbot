@@ -207,11 +207,14 @@ client.once('ready', client => {
 	log(`Logged in as ${client.user.tag}!`, client)
 });
 
+
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isChatInputCommand()) return;
+    const adminIDs = [601077405481828362, 338080523886919680]
     const { commandName } = interaction;
 
     if (commandName === 'fuckyou') {
+        if (client.clientId === adminIDs)
         await interaction.reply('@everyone Fuck You');
     }
 });
