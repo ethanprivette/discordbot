@@ -309,6 +309,7 @@ client.on('interactionCreate', async interaction =>{
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 
+    const username = client.user.username
 	const { commandName } = interaction;
 
 	if (commandName === 'addtag') {
@@ -323,13 +324,14 @@ client.on('interactionCreate', async interaction => {
 				username: interaction.user.username,
 			});
 
+            log(`New tag **${tag.name}** has been added.`, client);
 			return interaction.reply(`Tag ${tag.name} added.`);
 		}
 		catch (error) {
 			if (error.name === 'SequelizeUniqueConstraintError') {
 				return interaction.reply('That tag already exists.');
 			}
-
+            log(`Tag **${tag.name}** failed to add.`, client)
 			return interaction.reply('Something went wrong with adding a tag.');
 		}
 	}
@@ -343,10 +345,11 @@ client.on('interactionCreate', async interaction => {
             // equivalent to: UPDATE tags SET usage_count = usage_count + 1 WHERE name = 'tagName';
             tag.increment('usage_count');
     
+            log(`Tag **${tag.name}** has been fetched by ${username}.`, client)
             return interaction.reply(tag.get('description'));
         }
-    
-        return interaction.reply(`Could not find tag: ${tagName}`);
+        log(`Tag **${tag.name}** not found`, client)
+        return interaction.reply(`Could not find tag: ${tagName}.`);
     }
     else if (commandName == 'taginfo') {
         const tagName = interaction.options.getString('name');
@@ -355,6 +358,7 @@ client.on('interactionCreate', async interaction => {
         const tag = await Tags.findOne({ where: { name: tagName } });
     
         if (tag) {
+            log(`Tag **${tag.name}** was accessed by ${username}.`, client)
             return interaction.reply(`${tagName} was created by ${tag.username} at ${tag.createdAt} and has been used ${tag.usage_count} times.`);
         }
     
@@ -365,6 +369,7 @@ client.on('interactionCreate', async interaction => {
         const tagList = await Tags.findAll({ attributes: ['name'] });
         const tagString = tagList.map(t => t.name).join(', ') || 'No tags set.';
     
+        log(`Tag list was accessed by ${username}.`, client)
         return interaction.reply(`List of tags: ${tagString}`);
     }
     else if (commandName === 'deletetag') {
@@ -374,6 +379,7 @@ client.on('interactionCreate', async interaction => {
     
         if (!rowCount) return interaction.reply('That tag doesn\'t exist.');
     
+        log(`Tag **${tagName}** was deleted.`, client)
         return interaction.reply('Tag deleted.');
     }
 });
