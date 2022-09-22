@@ -57,7 +57,7 @@ con = {
 */
 
 function log(msg, key) {
-	const undef = null;
+	var undef;
 	console.log(msg);
 	var now = new Date();
 	    if (key === undef) {
