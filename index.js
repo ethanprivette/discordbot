@@ -15,6 +15,24 @@ const client = new Client({
     },
     intents: [botIntents],
 });
+
+function log(msg, key) {
+	console.log(msg);
+	var now = new Date();
+    client.on('ready', client => {
+	    if (key === undefined) {
+			const channel = client.channels.fetch('1017927935488966697');
+				channel.then(channel=>channel.send(`${now.toUTCString()}: ${msg}`))
+
+        } else {
+		    var client = key;
+		    var channel = client.channels.fetch('1017927935488966697');
+			    channel.then(channel=>channel.send(`${now.toUTCString()}: ${msg}`))
+        }
+    })
+}
+
+
 const currency = new Collection();
 
 Reflect.defineProperty(currency, 'add', {
@@ -152,21 +170,6 @@ con = {
 }
 */
 
-function log(msg, key) {
-	console.log(msg);
-	var now = new Date();
-    client.on('ready', client => {
-	    if (key === undefined) {
-			const channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(`${now.toUTCString()}: ${msg}`))
-
-        } else {
-		    var client = key;
-		    var channel = client.channels.fetch('1017927935488966697');
-			    channel.then(channel=>channel.send(`${now.toUTCString()}: ${msg}`))
-        }
-    })
-}
 
 //sequelize//
 
