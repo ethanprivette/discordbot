@@ -155,21 +155,18 @@ con = {
 function log(msg, key) {
 	console.log(msg);
 	var now = new Date();
-	if (key === undefined) {
-		client.on('ready', client => {
+    client.on('ready', client => {
+	    if (key === undefined) {
 			const channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(`${now.toUTCString()} : ${msg}`))})
+				channel.then(channel=>channel.send(`${now.toUTCString()}: ${msg}`))
 
-    } else {
-		var client = key;
-		var channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(`${now.toUTCString()} : ${msg}`))
-	}
+        } else {
+		    var client = key;
+		    var channel = client.channels.fetch('1017927935488966697');
+			    channel.then(channel=>channel.send(`${now.toUTCString()}: ${msg}`))
+        }
+    })
 }
-
-
-
-    //
 
 //sequelize//
 
