@@ -2,6 +2,7 @@ const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, Slas
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction, Op } = require('sequelize');
+const wait = require('node:timers/promises')
 const talkedRecently = new Set(); 
 const { Users, CurrencyShop } = require('./dbObjects.js');
 
@@ -57,8 +58,9 @@ con = {
 */
 
 const fs = require('fs');
-const fileName = './time.json';
-const file = require(fileName);
+const { waitForDebugger } = require('inspector');
+const fileName = './data.json';
+//const file = require(fileName);
 try {
 	file.key = "new value";
     
@@ -502,3 +504,15 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(token);
+
+client.on('interactionCreate', async interaction => {
+    if(!interaction.isChatInputCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (commandName === 'disablebot'){
+        log(`Bot has been disabled.`)
+        //wait(4000);
+        client.destroy()
+    }
+});
