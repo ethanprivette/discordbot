@@ -56,6 +56,27 @@ con = {
 }
 */
 
+const fs = require('fs');
+const fileName = './time.json';
+const file = require(fileName);
+try {
+	file.key = "new value";
+    
+fs.writeFile(fileName, JSON.stringify(file), function writeJSON(err) {
+  if (err) return console.log(err);
+  console.log(JSON.stringify(file));
+  console.log('writing to ' + fileName);
+});
+} catch (error) {
+	console.error('doesnt work (failed at setting value):', error)
+}
+
+try {
+	//
+} catch (error) {
+	console.error('doesnt work (failed at getting value):', error)
+}
+
 function log(msg, key) {
 	var undef;
 	console.log(msg);
