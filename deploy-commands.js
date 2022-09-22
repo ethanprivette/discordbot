@@ -56,6 +56,7 @@ rest.put(Routes.applicationCommands('1009293626951598181'), { body: commands })
 const admincommands = [
         new SlashCommandBuilder().setName('admintest').setDescription('testing command for admins'),
         new SlashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
+        new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
         new SlashCommandBuilder()
             .setName('addtag')
             .setDescription('adding tags')
