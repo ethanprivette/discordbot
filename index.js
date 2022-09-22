@@ -65,9 +65,11 @@ function log(msg, key) {
 				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
 	    });
         } else {
-		console.log(key + ' = key ');
-		        var channel = key.channels.fetch('1017927935488966697');
+            client.on('ready', client => {
+		        console.log(key + ' = key ');
+		        const channel = client.channels.fetch('1017927935488966697');
 			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
+            })
         }
     }
 
