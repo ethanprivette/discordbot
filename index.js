@@ -60,18 +60,16 @@ function log(msg, key) {
 	console.log(key + ' = key ');
 	console.log(msg);
 	var now = new Date();
-    client.on('ready', client => {
 	    if (key === undefined) {
-			const channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
-
+            client.on('ready', client => {
+			    const channel = client.channels.fetch('1017927935488966697');
+				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))})
         } else {
-		    var client = key;
-		    var channel = client.channels.fetch('1017927935488966697');
-			    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : ${msg}*`))
+		        var client = key;
+		        var channel = client.channels.fetch('1017927935488966697');
+			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : ${msg}*`))
         }
-    })
-}
+    }
 
 //sequelize//
 
