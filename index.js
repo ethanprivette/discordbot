@@ -511,7 +511,7 @@ client.on('interactionCreate', async interaction => {
     const { commandName } = interaction;
 
     if (commandName === 'disablebot'){
-        log(`Bot has been disabled.`)
+        log(`Bot has been disabled.`, interaction)
         //wait(4000);
         client.destroy()
     }
