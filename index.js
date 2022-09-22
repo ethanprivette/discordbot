@@ -57,17 +57,16 @@ con = {
 */
 
 function log(msg, key) {
-	console.log(key + ' = key ');
 	console.log(msg);
 	var now = new Date();
 	    if (key === 'undefined') {
             client.on('ready', client => {
-			    var channel = client.channels.fetch('1017927935488966697');
+			    const channel = client.channels.fetch('1017927935488966697');
 				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
 	    });
         } else {
-		        var client = key;
-		        var channel = client.channels.fetch('1017927935488966697');
+		console.log(key + ' = key ');
+		        var channel = key.channels.fetch('1017927935488966697');
 			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
         }
     }
