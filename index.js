@@ -63,12 +63,12 @@ function log(msg, key) {
     client.on('ready', client => {
 	    if (key === undefined) {
 			const channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(`${now.toLocaleString()}: ${msg}`))
+				channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
 
         } else {
 		    var client = key;
 		    var channel = client.channels.fetch('1017927935488966697');
-			    channel.then(channel=>channel.send(`${now.toLocaleString()}: ${msg}`))
+			    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : ${msg}*`))
         }
     })
 }
