@@ -92,7 +92,10 @@ try {
 
 
 const Times = sequelize.define("Times", {
-  currenttime: {
+  time: {
+    type: Sequelize.STRING,
+  },
+	currenttime: {
     type: Sequelize.STRING,
   },
 },
@@ -124,7 +127,12 @@ client.once('ready', client => {
 });
 
 try {
-	
+	const now = new Date();
+  const year = now.getFullYear();
+  const mes = now.getMonth()+1;
+  const dia = now.getDate();
+  const fecha = `${dia}-${mes}-${year}`;
+	const time = await Times.fineOne({ where: { name: fecha } });
 } catch (error) {
 	console.error('youfuckedupwooper: ', error)
 }
