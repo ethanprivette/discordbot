@@ -150,7 +150,7 @@ client.on('interactionCreate', async interaction => {
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
-    const adminIDs = [601077405481828362, 338080523886919680]
+    const adminIDs = ['601077405481828362', '338080523886919680']
     const { commandName } = interaction;
 
     if (commandName === 'help') {
@@ -459,8 +459,6 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.login(token);
-
 client.on('interactionCreate', async interaction => {
     if(!interaction.isChatInputCommand()) return;
 
@@ -473,3 +471,5 @@ client.on('interactionCreate', async interaction => {
         }, 5000 );
     }
 });
+
+client.login(token);
