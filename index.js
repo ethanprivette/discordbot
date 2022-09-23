@@ -40,11 +40,11 @@ function err(msg, err, key) {
 	    if (key === undef) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
-				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}* : ${err}`))
+				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*: ${err}`))
 	    });
         } else {
 		        const channel = client.channels.fetch('1017927935488966697');
-			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}* : ${err}`))
+			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*: ${err}`))
         }
     }
 
@@ -116,7 +116,7 @@ try {
 		log(`tags shouldnt be changed`)
 	}
 } catch (error) {
-	err('youfuckedupwooper: ', error)
+	err('youfuckedupwooper', error)
 }
 
 client.on('ready', client => {
