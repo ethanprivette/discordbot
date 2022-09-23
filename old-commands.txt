@@ -293,3 +293,39 @@ client.on('interactionCreate', async interaction =>{
         }
     }
 })
+
+    OLD LOG COMMANDS
+
+function log(msg) {
+    console.log(msg);
+
+    client.on('ready', client => {
+        const channel = client.channels.fetch('1017927935488966697');
+            channel.then(channel=>channel.send(msg))
+    })
+}
+
+function logerror(msg, errormsg) {
+    console.error(msg, errormsg);
+    client.on('ready', client => {
+        const channel = client.channels.fetch('1017927935488966697');
+            channel.then(channel=>channel.send(msg))
+    })
+}
+
+con = {
+   log: function(msg) {
+		console.log(msg);
+		client.on('ready', client => {
+        const channel = client.channels.fetch('1017927935488966697');
+            channel.then(channel=>channel.send(msg))
+		};
+	},
+   error: function(msg, errormsg) {
+		console.error(msg, errormsg);
+		client.on('ready', client => {
+			const channel = client.channels.fetch('1017927935488966697');
+				channel.then(channel=>channel.send(msg, errormsg))
+		};
+   }
+}

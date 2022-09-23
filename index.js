@@ -18,45 +18,6 @@ const client = new Client({
 });
 const currency = new Collection();
 
-//log function test
-/*
-function log(msg) {
-    console.log(msg);
-
-    client.on('ready', client => {
-        const channel = client.channels.fetch('1017927935488966697');
-            channel.then(channel=>channel.send(msg))
-    })
-}
-
-function logerror(msg, errormsg) {
-    console.error(msg, errormsg);
-    client.on('ready', client => {
-        const channel = client.channels.fetch('1017927935488966697');
-            channel.then(channel=>channel.send(msg))
-    })
-}
-*/
-
-/*
-con = {
-   log: function(msg) {
-		console.log(msg);
-		client.on('ready', client => {
-        const channel = client.channels.fetch('1017927935488966697');
-            channel.then(channel=>channel.send(msg))
-		};
-	},
-   error: function(msg, errormsg) {
-		console.error(msg, errormsg);
-		client.on('ready', client => {
-			const channel = client.channels.fetch('1017927935488966697');
-				channel.then(channel=>channel.send(msg, errormsg))
-		};
-   }
-}
-*/
-
 const fs = require('fs');
 const { waitForDebugger } = require('inspector');
 const fileName = './data.json';
