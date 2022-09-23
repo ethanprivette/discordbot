@@ -28,9 +28,23 @@ function log(msg, key) {
 				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
 	    });
         } else {
-		        console.log(key + ' = key ');
 		        const channel = client.channels.fetch('1017927935488966697');
 			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
+        }
+    }
+
+function err(msg, err, key) {
+	var undef;
+	console.error(msg, err);
+	var now = new Date();
+	    if (key === undef) {
+            client.on('ready', client => {
+			    const channel = client.channels.fetch('1017927935488966697');
+				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}* : ${err}`))
+	    });
+        } else {
+		        const channel = client.channels.fetch('1017927935488966697');
+			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}* : ${err}`))
         }
     }
 
@@ -45,7 +59,7 @@ try {
     sequelize.authenticate();
     log('Connection has been established successfully.')
   } catch (error) {
-    console.error('Unable to connect to the database:', error)
+    err('Unable to connect to the database:', error)
   }
 
 
@@ -102,7 +116,7 @@ try {
 		log(`tags shouldnt be changed`)
 	}
 } catch (error) {
-	console.error('youfuckedupwooper: ', error)
+	err('youfuckedupwooper: ', error)
 }
 
 client.on('ready', client => {
