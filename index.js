@@ -18,24 +18,6 @@ const client = new Client({
 });
 const currency = new Collection();
 
-const fs = require('fs');
-const { waitForDebugger } = require('inspector');
-const fileName = './data.json';
-//const file = require(fileName);
-try {
-	file.key = "new value";
-    
-fs.writeFile(fileName, JSON.stringify(file), function writeJSON(err) {
-  if (err) return console.log(err);
-  console.log(JSON.stringify(file));
-  console.log('writing to ' + fileName);
-});
-} catch (error) {
-	console.error('doesnt work (failed at setting value):', error)
-}
-
-
-
 function log(msg, key) {
 	var undef;
 	console.log(msg);
@@ -101,6 +83,27 @@ client.once('ready', client => {
 
 	log(`Logged in as ${client.user.tag}!`, client)	
 });
+
+try {
+	const now = new Date();
+  const year = now.getFullYear();
+  const mes = now.getMonth()+1;
+  const dia = now.getDate();
+  const fecha = `${dia}-${mes}-${year}`;
+	const time = await Times.fineOne({ where: { name: fecha } });
+	if (time === null) {
+		await Times.destroy({ where: { name:  'time' } })
+		const timecreate = await Times.create({
+				name: 'time',
+				time: fecha,
+			});
+		log(`new tag should have been made and a new `)
+	} else {
+		log(`tags shouldnt be changed`)
+	}
+} catch (error) {
+	console.error('youfuckedupwooper: ', error)
+}
 
 client.on('ready', client => {
     log('Bot is online', client)
