@@ -117,9 +117,12 @@ try {
   const mes = now.getMonth()+1;
   const dia = now.getDate();
   const fecha = `${dia}-${mes}-${year}`;
-	const time = Times.findOne({ where: { name: fecha } });
+	const time = Times.findOne({ where: { time: fecha } });
 	if (time === null) {
-		Times.destroy({ where: { name:  'time' } })
+		db.Times.destroy({
+  		where: {},
+  		truncate: true
+			})
 		const timecreate = Times.create({
 				name: 'time',
 				time: fecha,
@@ -127,6 +130,10 @@ try {
 		log(`new tag should have been made and a new `)
 	} else {
 		log(`tags shouldnt be changed`)
+		const tagList = await Times.findAll({ attributes: ['name'] });
+        	const tagString = tagList.map(t => t.name).join(', ') || 'No tags set.';
+		log(tagString)
+		Times
 	}
 } catch (error) {
 	err('youfuckedupwooper', error)
