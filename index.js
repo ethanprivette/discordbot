@@ -92,10 +92,10 @@ try {
 
 
 const Times = sequelize.define("Times", {
+	name: {
+		type: Sequelize.STRING,
+	},
   time: {
-    type: Sequelize.STRING,
-  },
-	currenttime: {
     type: Sequelize.STRING,
   },
 },
@@ -123,7 +123,7 @@ client.once('ready', client => {
 	Tags.sync();
 	Times.sync();
 
-	log(`Logged in as ${client.user.tag}!`, client)
+	log(`Logged in as ${client.user.tag}!`, client)	
 });
 
 try {
@@ -133,6 +133,16 @@ try {
   const dia = now.getDate();
   const fecha = `${dia}-${mes}-${year}`;
 	const time = await Times.fineOne({ where: { name: fecha } });
+	if (time === null) {
+		await Times.destroy({ where: { name:  'time' } })
+		const timecreate = await Times.create({
+				name: 'time',
+				time: fecha,
+			});
+		log(`new tag should have been made and a new `)
+	} else {
+		log(`tags shouldnt be changed`)
+	}
 } catch (error) {
 	console.error('youfuckedupwooper: ', error)
 }
