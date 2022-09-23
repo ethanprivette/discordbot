@@ -34,11 +34,7 @@ fs.writeFile(fileName, JSON.stringify(file), function writeJSON(err) {
 	console.error('doesnt work (failed at setting value):', error)
 }
 
-try {
-	//
-} catch (error) {
-	console.error('doesnt work (failed at getting value):', error)
-}
+
 
 function log(msg, key) {
 	var undef;
@@ -71,7 +67,20 @@ try {
   }
 
 
+const Times = sequelize.define("Times", {
+	name: {
+		type: Sequelize.STRING,
+	},
+  time: {
+    type: Sequelize.STRING,
+  },
+},
+{
+  timestamps: false,
+});
 
+
+//
 const Tags = sequelize.define('tags', {
     name: {
         type: Sequelize.STRING,
@@ -88,8 +97,9 @@ const Tags = sequelize.define('tags', {
 
 client.once('ready', client => {
 	Tags.sync();
+	Times.sync();
 
-	log(`Logged in as ${client.user.tag}!`, client)
+	log(`Logged in as ${client.user.tag}!`, client)	
 });
 
 client.on('ready', client => {
