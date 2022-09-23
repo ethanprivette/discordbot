@@ -90,10 +90,10 @@ try {
   const mes = now.getMonth()+1;
   const dia = now.getDate();
   const fecha = `${dia}-${mes}-${year}`;
-	const time = await Times.fineOne({ where: { name: fecha } });
+	const time = Times.fineOne({ where: { name: fecha } });
 	if (time === null) {
-		await Times.destroy({ where: { name:  'time' } })
-		const timecreate = await Times.create({
+		Times.destroy({ where: { name:  'time' } })
+		const timecreate = Times.create({
 				name: 'time',
 				time: fecha,
 			});
