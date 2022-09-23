@@ -131,18 +131,6 @@ client.once('ready', client => {
 	log(`Logged in as ${client.user.tag}!`, client)
 });
 
-
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-    const adminIDs = [601077405481828362, 338080523886919680]
-    const { commandName } = interaction;
-
-    if (commandName === 'fuckyou') {
-        if (client.clientId === adminIDs)
-        await interaction.reply('@everyone Fuck You');
-    }
-});
-
 client.on('ready', client => {
     log('Bot is online', client)
 });
@@ -201,7 +189,7 @@ client.on('interactionCreate', async interaction => {
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
-
+    const adminIDs = [601077405481828362, 338080523886919680]
     const { commandName } = interaction;
 
     if (commandName === 'help') {
@@ -214,6 +202,10 @@ client.on('interactionCreate', async interaction => {
         setTimeout(() => {
             talkedRecently.delete(interaction.user.clientId);
         }, 5000);
+    } else if (commandName === 'fuckyou') {
+        if (client.clientId === adminIDs)
+            await interaction.reply('@everyone Fuck You');
+        else return;
     }
 });
 
