@@ -125,7 +125,7 @@ client.once('ready', client => {
 
 	log(`Logged in as ${client.user.tag}!`, client)	
 });
-
+//
 try {
 	const now = new Date();
   const year = now.getFullYear();
