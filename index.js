@@ -5,6 +5,8 @@ const { Sequelize, Transaction, Op } = require('sequelize');
 const wait = require('node:timers/promises')
 const talkedRecently = new Set(); 
 const { Users, CurrencyShop } = require('./dbObjects.js');
+const { SqlError } = require('mariadb');
+const { ADDRGETNETWORKPARAMS } = require('node:dns');
 
 global.cooldown = 10000;
 global.unitCooldown = 60000;
@@ -91,6 +93,17 @@ const Tags = sequelize.define('tags', {
     },
 });   
 
+const Teams = sequelize.define('teams', {
+    name: {
+        type: Sequelize.STRING,
+        unique: true,
+    },
+    founder: Sequelize.STRING,
+    user2: Sequelize.STRING,
+    user3: Sequelize.STRING,
+    user4: Sequelize.STRING,
+});
+
 client.once('ready', client => {
 	Tags.sync();
 	Times.sync();
@@ -104,7 +117,7 @@ try {
   const mes = now.getMonth()+1;
   const dia = now.getDate();
   const fecha = `${dia}-${mes}-${year}`;
-	const time = Times.fineOne({ where: { name: fecha } });
+	const time = Times.findOne({ where: { name: fecha } });
 	if (time === null) {
 		Times.destroy({ where: { name:  'time' } })
 		const timecreate = Times.create({
@@ -123,7 +136,24 @@ client.on('ready', client => {
     log('Bot is online', client)
 });
 
-function addTag(tagName ,tagDescription, interaction) {
+function addTeam(teamName, founder, user2, user3, user4, interaction) {
+    try {
+        const team = Teams.create({
+            name: teamName,
+            founder: interaction.client.username,
+            user2: interaction.options.getUser() ?? end,
+            user3: interaction.options.getUser() ?? end,
+            user4: interaction.options.getUser() ?? end,
+        });
+
+        return log(`team ${teamName} created`, client)
+    }
+    catch (error) {
+        err(`Something went wrong`, error)
+    }
+}
+
+function addTag(tagName, tagDescription, interaction) {
     try {
         // equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
         const tag = Tags.create({
@@ -200,8 +230,37 @@ client.on('interactionCreate', async interaction => {
 client.on('interactionCreate', async interaction => {
     if(!interaction.isChatInputCommand()) return;
 
+    const { commandName } = interaction;
+
+    if (commandName === 'teamcreatetest') {
+        const teamName = interaction.options.getString('name')
+        const target = interaction.options.getUser('user')
+        const founder = interaction.user.username
+
+        addTeam(teamName, founder, target, target, target)
+    }
 });
 
+/*
+try {
+			// equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
+			const tag = await Tags.create({
+				name: tagName,
+				description: tagDescription,
+				username: interaction.user.username,
+			});
+
+            log(`New tag **${tag.name}** has been added.`, client);
+			return interaction.reply(`Tag ${tag.name} added.`);
+		}
+		catch (error) {
+			if (error.name === 'SequelizeUniqueConstraintError') {
+				return interaction.reply('That tag already exists.');
+			}
+            log(`Tag **${tag.name}** failed to add.`, client)
+			return interaction.reply('Something went wrong with adding a tag.');
+		}
+*/
 
 /*
 testin

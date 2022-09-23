@@ -58,6 +58,13 @@ const admincommands = [
         new SlashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
         new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
         new SlashCommandBuilder()
+            .setName('teamcreatetest')
+            .setDescription('creates a team')
+            .addStringOption(option => option.setName('name').setDescription('team name').setRequired(true))
+            .addStringOption(option => option.setName('user2').setDescription('invite someone to your team'))
+            .addStringOption(option => option.setName('user3').setDescription('invite someone to your team'))
+            .addStringOption(option => option.setName('user4').setDescription('invite someone to your team')),
+        new SlashCommandBuilder()
             .setName('addtag')
             .setDescription('adding tags')
             .addStringOption(option => option.setName('name').setDescription('tagname').setRequired(true))
