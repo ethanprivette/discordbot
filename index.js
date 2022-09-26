@@ -1,4 +1,4 @@
-const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength } = require('discord.js');
+const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction, Op } = require('sequelize');
@@ -106,6 +106,7 @@ const Teams = sequelize.define('teams', {
 
 client.once('ready', client => {
 	Tags.sync();
+    Teams.sync();
 	Times.sync();
 
 	log(`Logged in as ${client.user.tag}!`, client)	
@@ -117,12 +118,9 @@ try {
   const mes = now.getMonth()+1;
   const dia = now.getDate();
   const fecha = `${dia}-${mes}-${year}`;
-	const time = Times.findOne({ where: { time: fecha } });
+	const time = Times.findOne({ where: { name: fecha } });
 	if (time === null) {
-		db.Times.destroy({
-  		where: {},
-  		truncate: true
-			})
+		Times.destroy({ where: { name:  'time' } })
 		const timecreate = Times.create({
 				name: 'time',
 				time: fecha,
@@ -130,10 +128,6 @@ try {
 		log(`new tag should have been made and a new `)
 	} else {
 		log(`tags shouldnt be changed`)
-		const tagList = await Times.findAll({ attributes: ['name'] });
-        	const tagString = tagList.map(t => t.name).join(', ') || 'No tags set.';
-		log(tagString)
-		Times
 	}
 } catch (error) {
 	err('youfuckedupwooper', error)
@@ -143,20 +137,20 @@ client.on('ready', client => {
     log('Bot is online', client)
 });
 
-function addTeam(teamName, founder, user2, user3, user4, interaction) {
+function addTeam(teamName, user2, user3, user4, interaction) {
     try {
         const team = Teams.create({
             name: teamName,
-            founder: interaction.client.username,
-            user2: interaction.options.getUser() ?? end,
-            user3: interaction.options.getUser() ?? end,
-            user4: interaction.options.getUser() ?? end,
+            founder: interaction.user.username,
+            user2: user2,
+            user3: user3,
+            user4: user4,
         });
 
-        return log(`team ${teamName} created`, client)
+        return log(`team ${team.teamName} created`, client)
     }
     catch (error) {
-        err(`Something went wrong`, error)
+        err(`Something went wrong`, error, client)
     }
 }
 
@@ -244,30 +238,25 @@ client.on('interactionCreate', async interaction => {
         const target = interaction.options.getUser('user')
         const founder = interaction.user.username
 
-        addTeam(teamName, founder, target, target, target)
+        try {
+            const team = await Team.create({
+                name: teamName,
+                founder: founder,
+                user2: target,
+                user3: target,
+                user4: target,
+            });
+
+            addTeam(team.name, target, target, target, interaction)
+
+            log(`New team ${team.name} has been created`, client);
+            return interaction.reply(`Team ${team.name} has been created.`);
+        }
+        catch (error) {
+            err(`Team ${teamName} failed to be created`, error, client)
+        }
     }
 });
-
-/*
-try {
-			// equivalent to: INSERT INTO tags (name, description, username) values (?, ?, ?);
-			const tag = await Tags.create({
-				name: tagName,
-				description: tagDescription,
-				username: interaction.user.username,
-			});
-
-            log(`New tag **${tag.name}** has been added.`, client);
-			return interaction.reply(`Tag ${tag.name} added.`);
-		}
-		catch (error) {
-			if (error.name === 'SequelizeUniqueConstraintError') {
-				return interaction.reply('That tag already exists.');
-			}
-            log(`Tag **${tag.name}** failed to add.`, client)
-			return interaction.reply('Something went wrong with adding a tag.');
-		}
-*/
 
 /*
 testin
