@@ -58,6 +58,11 @@ const admincommands = [
         new SlashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
         new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
         new SlashCommandBuilder()
+            .setName('troll')
+            .setDescription('sends a message in a specified channel')
+            .addStringOption(option => option.setName('message').setDescription('message').setRequired(true))
+            .addChannelOption(option => option.setName('channel').setDescription('channel').setRequired(true)),
+        new SlashCommandBuilder()
             .setName('teamcreatetest')
             .setDescription('creates a team')
             .addStringOption(option => option.setName('name').setDescription('team name').setRequired(true))
