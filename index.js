@@ -119,17 +119,29 @@ try {
   const dia = now.getDate();
   const fecha = `${dia}-${mes}-${year}`;
 	
-	const time = Times.findOne({ where: { name: 'time' } });
+	const time = Times.findOne({ where: { time: fecha } });
 	log(time)
-	if (time === null) {
-		Times.destroy({ where: { name:  'time' } })
+	if (time) {
+		Times.destroy({
+  where: {},
+  truncate: true
+});
 		const timecreate = Times.create({
 				name: 'time',
 				time: fecha,
 			});
-		log(`new tag should have been made and a new `)
+		log(`first option occurred`)
 	} else {
-		log(`tags shouldnt be changed`)
+Times.destroy({
+  where: {},
+  truncate: true
+});
+const timecreate = Times.create({
+				name: 'time',
+				time: fecha,
+			});
+
+		log(`second option occurred`)
 	}
 } catch (error) {
 	err('youfuckedupwooper', error)
