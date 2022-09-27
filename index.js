@@ -131,12 +131,12 @@ try {
 				time: fecha,
 			});
 		log(`first option occurred`)
-	} else {
-Times.destroy({
-  where: {},
-  truncate: true
-});
-const timecreate = Times.create({
+	}
+		Times.destroy({
+			where: {},
+			truncate: true
+		});
+		const timecreate = Times.create({
 				name: 'time',
 				time: fecha,
 			});
