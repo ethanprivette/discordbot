@@ -116,7 +116,7 @@ try {
 	const now = new Date();
   const year = now.getFullYear();
   const mes = now.getMonth()+1;
-  const dia = now.getDate();
+  const dia = now.getDate()+1;
   const fecha = `${dia}-${mes}-${year}`;
 	
 	const time = Times.findOne({ where: { time: fecha } });
