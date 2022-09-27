@@ -142,8 +142,7 @@ try {
 			});
 
 		log(`second option occurred`)
-	}
-} catch (error) {
+	} catch (error) {
 	err('youfuckedupwooper', error)
 }
 
