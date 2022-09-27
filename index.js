@@ -123,14 +123,14 @@ try {
 	log(time)
 	if (time) {
 		Times.destroy({
-  where: {},
-  truncate: true
+			where: {},
+			truncate: true
 });
 		const timecreate = Times.create({
 				name: 'time',
 				time: fecha,
 			});
-		log(`first option occurred`)
+		return log(`first option occurred`)
 	}
 		Times.destroy({
 			where: {},
@@ -141,7 +141,7 @@ try {
 				time: fecha,
 			});
 
-		log(`second option occurred`)
+		return log(`second option occurred`)
 	} catch (error) {
 	err('youfuckedupwooper', error)
 }
