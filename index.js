@@ -130,7 +130,8 @@ try {
 				name: 'time',
 				time: fecha,
 			});
-		return log(`first option occurred`)
+		log(`first option occurred`)
+break;
 	}
 		Times.destroy({
 			where: {},
@@ -141,7 +142,8 @@ try {
 				time: fecha,
 			});
 
-		return log(`second option occurred`)
+		log(`second option occurred`)
+break;
 	} catch (error) {
 	err('youfuckedupwooper', error)
 }
