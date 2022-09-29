@@ -114,14 +114,15 @@ client.once('ready', client => {
 //
 
 try {
-	const now = new Date();
-  const year = now.getFullYear();
-  const mes = now.getMonth()+1;
-  const dia = now.getDate()+1;
-  const fecha = `${dia}-${mes}-${year}`;
-	const time = Times.findOne({ where: { time: fecha } });
-	log(time)
+	
 	client.on('ready', client => {
+		const now = new Date();
+		const year = now.getFullYear();
+		const mes = now.getMonth()+1;
+		const dia = now.getDate()+1;
+		const fecha = `${dia}-${mes}-${year}`;
+		const time = Times.findOne({ where: { time: fecha } });
+		log(time, client)
 		const channel = client.channels.fetch('1017927935488966697');
 		if (time) {
 			Times.destroy({
