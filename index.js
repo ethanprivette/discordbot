@@ -111,6 +111,7 @@ client.once('ready', client => {
 
 	log(`Logged in as ${client.user.tag}!`, client)	
 });
+//
 
 try {
 	const now = new Date();
@@ -121,6 +122,7 @@ try {
 	
 	const time = Times.findOne({ where: { time: fecha } });
 	log(time)
+	(function(){
 	if (time) {
 		Times.destroy({
 			where: {},
@@ -130,8 +132,7 @@ try {
 				name: 'time',
 				time: fecha,
 			});
-		log(`first option occurred`)
-break;
+		return log(`first option occurred`)
 	}
 		Times.destroy({
 			where: {},
@@ -142,12 +143,13 @@ break;
 				time: fecha,
 			});
 
-		log(`second option occurred`)
-break;
+		return log(`second option occurred`)
+})();
 	} catch (error) {
 	err('youfuckedupwooper', error)
 }
 
+//
 client.on('ready', client => {
     log('Bot is online', client)
 });
