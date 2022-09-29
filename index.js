@@ -119,32 +119,33 @@ try {
   const mes = now.getMonth()+1;
   const dia = now.getDate();
   const fecha = `${dia}-${mes}-${year}`;
-	
 	const time = Times.findOne({ where: { time: fecha } });
 	log(time)
-	(function(){
-	if (time) {
-		Times.destroy({
-			where: {},
-			truncate: true
-});
-		const timecreate = Times.create({
-				name: 'time',
-				time: fecha,
+	client.on('ready', client => {
+		const channel = client.channels.fetch('1017927935488966697');
+		if (time) {
+			Times.destroy({
+				where: {},
+				truncate: true
 			});
-		return log(`first option occurred`)
-	}
-		Times.destroy({
-			where: {},
-			truncate: true
-		});
-		const timecreate = Times.create({
-				name: 'time',
-				time: fecha,
+			const timecreate = Times.create({
+					name: 'time',
+					time: fecha,
+				});
+			return channel.then(channel=>channel.send(`first option occurred`))
+			
+		}
+			Times.destroy({
+				where: {},
+				truncate: true
 			});
+			const timecreate = Times.create({
+					name: 'time',
+					time: fecha,
+				});
 
-		return log(`second option occurred`)
-})();
+			return channel.then(channel=>channel.send(`second option occurred`))
+	});
 	} catch (error) {
 	err('youfuckedupwooper', error)
 }
