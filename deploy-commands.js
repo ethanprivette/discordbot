@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, Routes, CommandInteractionOptionResolver } = require('discord.js');
+const { SlashCommandBuilder, Routes, CommandInteractionOptionResolver, Client, IntentsBitField } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { clientId, guildId, token } = require('./config.json');
+const botIntents = new IntentsBitField(8)
 
 // GLOBAL COMMANDS
 const commands = [
-    new SlashCommandBuilder().setName('ping').setDescription('replies with pong.'),
     new SlashCommandBuilder().setName('big_red_button').setDescription('nukes everyone'),
     new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
     new SlashCommandBuilder().setName('fuckyou').setDescription('fuck you'),
@@ -60,8 +60,8 @@ const admincommands = [
         new SlashCommandBuilder()
             .setName('troll')
             .setDescription('sends a message in a specified channel')
-            .addStringOption(option => option.setName('message').setDescription('message').setRequired(true))
-            .addChannelOption(option => option.setName('channel').setDescription('channel').setRequired(true)),
+            .addStringOption(option => option.setName('message').setDescription('message to send troll').setRequired(true))
+            .addChannelOption(option => option.setName('channel').setDescription('channel to send troll').setRequired(true)),
         new SlashCommandBuilder()
             .setName('teamcreatetest')
             .setDescription('creates a team')

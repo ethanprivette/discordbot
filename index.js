@@ -2,11 +2,9 @@ const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, Slas
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction, Op } = require('sequelize');
-const wait = require('node:timers/promises')
 const talkedRecently = new Set(); 
 const { Users, CurrencyShop } = require('./dbObjects.js');
 const { SqlError } = require('mariadb');
-const { ADDRGETNETWORKPARAMS } = require('node:dns');
 
 global.cooldown = 10000;
 global.unitCooldown = 60000;
@@ -148,7 +146,7 @@ try {
 			return channel.then(channel=>channel.send(`second option occurred`))
 	});
 	} catch (error) {
-	err('youfuckedupwooper', error)
+	err('youfuckedupwooper', error, client)
 }
 
 //
@@ -280,6 +278,8 @@ client.on('interactionCreate', async interaction => {
 /*
 testin
 */
+
+/*
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
 	
@@ -290,13 +290,16 @@ client.on('interactionCreate', async interaction =>{
     const { msg } = interaction.options.getString('message');
 
     if (commandName === 'troll' && (interaction.user.clientId === wooperId || ethonkosID)) {
-        chnl.send(msg.content)
-            .then(msg => log(`Message ${msg.content} sent in ${chnl}`))
+        log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
+        //chnl.send(msg.content)
+            //.then(msg => msg.log(`Message ${msg.content} sent in ${chnl}`))
         log(`troll command used`, client)
     } else {
         err(`Troll failed`, error, client)
     }
 });
+
+*/
 
 
 client.on('interactionCreate', async interaction =>{
