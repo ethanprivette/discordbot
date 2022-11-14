@@ -36,6 +36,11 @@ const commands = [
                     { name: 'ships', value: 'ships' },
                 ))
                 .addIntegerOption(option => option.setName('amount').setDescription('train multiple units').setRequired(true))),
+    new SlashCommandBuilder()
+        .setName('troll')
+        .setDescription('sends a message in a specified channel')
+        .addStringOption(option => option.setName('message').setDescription('message to send troll').setRequired(true))
+        .addChannelOption(option => option.setName('channel').setDescription('channel to send troll').setRequired(true)),
     new SlashCommandBuilder().setName('balance').setDescription('checks users balance'),
     new SlashCommandBuilder().setName('inventory').setDescription('shows users inventory'),
     new SlashCommandBuilder().setName('transfer').setDescription('transfer energy to another user'),
@@ -57,11 +62,6 @@ const admincommands = [
         new SlashCommandBuilder().setName('admintest').setDescription('testing command for admins'),
         new SlashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
         new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
-        new SlashCommandBuilder()
-            .setName('troll')
-            .setDescription('sends a message in a specified channel')
-            .addStringOption(option => option.setName('message').setDescription('message to send troll').setRequired(true))
-            .addChannelOption(option => option.setName('channel').setDescription('channel to send troll').setRequired(true)),
         new SlashCommandBuilder()
             .setName('teamcreatetest')
             .setDescription('creates a team')

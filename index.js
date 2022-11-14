@@ -279,28 +279,22 @@ client.on('interactionCreate', async interaction => {
 testin
 */
 
-/*
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
 	
     const { commandName } = interaction;
     const { wooperId } = '338080523886919680';
     const { ethonkosID } = '601077405481828362';
-    const { chnl } = interaction.options.getChannel('channel');
-    const { msg } = interaction.options.getString('message');
+    const chnl = interaction.options.getChannel('channel');
+    const msg = interaction.options.getString('message');
 
     if (commandName === 'troll' && (interaction.user.clientId === wooperId || ethonkosID)) {
         log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
-        //chnl.send(msg.content)
-            //.then(msg => msg.log(`Message ${msg.content} sent in ${chnl}`))
-        log(`troll command used`, client)
+        chnl.send(msg)
     } else {
         err(`Troll failed`, error, client)
     }
 });
-
-*/
-
 
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
