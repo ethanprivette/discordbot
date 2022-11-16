@@ -195,6 +195,7 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const { commandName } = interaction;
+    const tempunits = await Tags.findOne({ where: { name: 'check tags' } });
 
     if (commandName === 'embedtest') {
         if (talkedRecently.has(interaction.user.clientId)){
@@ -202,24 +203,26 @@ client.on('interactionCreate', async interaction => {
         } else {
             const testEmbed = new EmbedBuilder()
                 .setColor(0x0099FF)
-                .setTitle('Some title')
-                .setURL('https://discord.js.org/')
-                .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
-                .setDescription('Some description here')
-                .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+                .setTitle('checkoslovakia')
+                //.setURL('https://discord.js.org/')
+                .setAuthor({ name: 'Victorum', iconURL: 'https://i.imgur.com/XiAmS2H.png', url: 'https://discord.js.org' })
+                .setDescription('Amount of units checkoslovakia has currently')
+                .setThumbnail('https://i.imgur.com/XiAmS2H.png')
                 .addFields(
-                    { name: 'Regular field title', value: 'Some value here' },
-                    { name: '\u200B', value: '\u200B' },
-                    { name: 'Inline field title', value: 'Some value here', inline: true },
-                    { name: 'Inline field title', value: 'Some value here', inline: true },
+                    { name: 'Infantry', value: `undef` },
+                    { name: 'Tanks', value: `undef`, inline: true },
+                    { name: 'Planes', value: `undef` },
+                    { name: 'Ships', value: `undef`, inline: true },
                 )
-                .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-                .setImage('https://i.imgur.com/AfFp7pu.png')
+                //.setImage('https://i.imgur.com/AfFp7pu.png')
                 .setTimestamp()
-                .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+                //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
         
             interaction.reply({ embeds: [testEmbed] })
-        }
+        } talkedRecently.add(interaction.user.clientId);
+        setTimeout(() => {
+            talkedRecently.delete(interaction.user.clientId);
+        }, cooldown );
     }
 })
 
@@ -289,12 +292,13 @@ client.on('interactionCreate', async interaction =>{
     const msg = interaction.options.getString('message');
 
     if (commandName === 'troll' && (interaction.user.clientId === wooperId || ethonkosID)) {
-        log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
-        chnl.send(msg)
-    } else {
-        err(`Troll failed`, error, client)
-    }
-});
+        try {
+            log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
+            chnl.send(msg)
+        } catch (error) {
+            err(`Troll failed`, error, client)
+        }
+}});
 
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;

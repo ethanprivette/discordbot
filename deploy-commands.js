@@ -8,6 +8,7 @@ const commands = [
     new SlashCommandBuilder().setName('big_red_button').setDescription('nukes everyone'),
     new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
     new SlashCommandBuilder().setName('fuckyou').setDescription('fuck you'),
+    new SlashCommandBuilder().setName('embedtest').setDescription('test embed'),
     new SlashCommandBuilder()
         .setName('build')
         .setDescription('Builds infrastructure')
