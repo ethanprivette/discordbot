@@ -1,4 +1,4 @@
-const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team } = require('discord.js');
+const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team, ClientUser } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction, Op } = require('sequelize');
@@ -164,10 +164,14 @@ function addTeam(teamName, user2, user3, user4, interaction) {
             user4: user4,
         });
 
-        return log(`team ${team.teamName} created`, client)
+        return log(`team ${team.teamName} created`, client);
     }
     catch (error) {
-        err(`Something went wrong`, error, client)
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return err('That team already exists', error, client);
+        } else {
+            return err(`Something went wrong`, error, client);
+        }
     }
 }
 
@@ -180,14 +184,14 @@ function addTag(tagName, tagDescription, interaction) {
             username: interaction.user.username,
         });
 
-        return interaction.reply(`tag ${tag.tagname} added.`);
+        return log(`tag ${tag.tagname} added.`, client);
     }
     catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
-            return interaction.reply('That tag already exists.');
+            return err('That tag already exists.', error, client);
         }
 
-        return interaction.reply('Something went wrong with adding a tag.');
+        return err('Something went wrong with adding a tag.', error, client);
     }
 }
 
@@ -195,7 +199,10 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const { commandName } = interaction;
-    const tempunits = await Tags.findOne({ where: { name: 'check tags' } });
+    const Infantry = 218
+    const Tanks = 1404
+    const Planes = 143
+    const Ships = 56
 
     if (commandName === 'embedtest') {
         if (talkedRecently.has(interaction.user.clientId)){
@@ -203,16 +210,17 @@ client.on('interactionCreate', async interaction => {
         } else {
             const testEmbed = new EmbedBuilder()
                 .setColor(0x0099FF)
-                .setTitle('checkoslovakia')
+                .setTitle('Checkoslovakia')
                 //.setURL('https://discord.js.org/')
                 .setAuthor({ name: 'Victorum', iconURL: 'https://i.imgur.com/XiAmS2H.png', url: 'https://discord.js.org' })
                 .setDescription('Amount of units checkoslovakia has currently')
                 .setThumbnail('https://i.imgur.com/XiAmS2H.png')
                 .addFields(
-                    { name: 'Infantry', value: `undef` },
-                    { name: 'Tanks', value: `undef`, inline: true },
-                    { name: 'Planes', value: `undef` },
-                    { name: 'Ships', value: `undef`, inline: true },
+                    { name: 'Infantry', value: `${Infantry}`, inline: true },
+                    { name: 'Tanks', value: `${Tanks}`, inline: true },
+                    { name: '\u200b', value: '\u200b' },
+                    { name: 'Planes', value: `${Planes}`, inline: true },
+                    { name: 'Ships', value: `${Ships}`, inline: true },
                 )
                 //.setImage('https://i.imgur.com/AfFp7pu.png')
                 .setTimestamp()
@@ -259,7 +267,7 @@ client.on('interactionCreate', async interaction => {
         const founder = interaction.user.username
 
         try {
-            const team = await Team.create({
+            const team = await Teams.create({
                 name: teamName,
                 founder: founder,
                 user2: target,
@@ -475,6 +483,13 @@ client.on('interactionCreate', async interaction => {
     
         log(`Tag **${tagName}** was deleted.`, client)
         return interaction.reply('Tag deleted.');
+    }
+    else if (commandName === 'showteams') {
+        const teamList = await Teams.findAll({attributes: ['name'] });
+        const teamString = teamList.map(t => t.name).join(', ') || 'No teams created.';
+
+        log(`Team list was accessed by ${username}.`, client)
+        return interaction.reply(`List of teams ${teamString}`);
     }
 });
 

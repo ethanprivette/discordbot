@@ -75,21 +75,24 @@ const admincommands = [
             .setDescription('adding tags')
             .addStringOption(option => option.setName('name').setDescription('tagname').setRequired(true))
             .addStringOption(option => option.setName('description').setDescription('tagdescription').setRequired(true)),
-            new SlashCommandBuilder()
-                .setName('fetchtag')
-                .setDescription('fetches a tag')
-                .addStringOption(option => option.setName('name').setDescription('select a tag to fetch').setRequired(true)),
-            new SlashCommandBuilder()
-                .setName('taginfo')
-                .setDescription('displays a tag\'s info')
-                .addStringOption(option => option.setName('name').setDescription('displays info on the selected tag').setRequired(true)),
-            new SlashCommandBuilder()
-                .setName('showtags')
-                .setDescription('displays all created tags'),
-            new SlashCommandBuilder()
-                .setName('deletetag')
-                .setDescription('deleted selected tag')
-                .addStringOption(option => option.setName('name').setDescription('deletes selected tag').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('fetchtag')
+            .setDescription('fetches a tag')
+            .addStringOption(option => option.setName('name').setDescription('select a tag to fetch').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('taginfo')
+            .setDescription('displays a tag\'s info')
+            .addStringOption(option => option.setName('name').setDescription('displays info on the selected tag').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('showtags')
+            .setDescription('displays all created tags'),
+        new SlashCommandBuilder()
+            .setName('deletetag')
+            .setDescription('deleted selected tag')
+            .addStringOption(option => option.setName('name').setDescription('deletes selected tag').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('showteams')
+            .setDescription('displays all created teams'),
 
     ]
     
