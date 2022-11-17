@@ -30,6 +30,7 @@ const commands = [
             subcommand
                 .setName('units')
                 .setDescription('trains units')
+                .addStringOption(option => option.setName('teamname').setDescription('select which team to train units to').setRequired(true))
                 .addStringOption(option => option.setName('units').setDescription('select what unit to train').setRequired(true).addChoices(
                     { name: 'infantry', value: 'infantry' },
                     { name: 'tanks', value: 'tanks' },
