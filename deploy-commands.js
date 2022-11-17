@@ -67,9 +67,17 @@ const admincommands = [
             .setName('teamcreatetest')
             .setDescription('creates a team')
             .addStringOption(option => option.setName('name').setDescription('team name').setRequired(true))
-            .addStringOption(option => option.setName('user2').setDescription('invite someone to your team'))
-            .addStringOption(option => option.setName('user3').setDescription('invite someone to your team'))
-            .addStringOption(option => option.setName('user4').setDescription('invite someone to your team')),
+            .addUserOption(option => option.setName('user2').setDescription('invite someone to your team'))
+            .addUserOption(option => option.setName('user3').setDescription('invite someone to your team'))
+            .addUserOption(option => option.setName('user4').setDescription('invite someone to your team')),
+        new SlashCommandBuilder()
+            .setName('teaminfo')
+            .setDescription('displays a team\'s members')
+            .addStringOption(option => option.setName('name').setDescription('select a team to see').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('disbandteam')
+            .setDescription('disbands a team')
+            .addStringOption(option => option.setName('teamname').setDescription('name of the team to disband').setRequired(true)),
         new SlashCommandBuilder()
             .setName('addtag')
             .setDescription('adding tags')

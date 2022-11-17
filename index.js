@@ -97,9 +97,9 @@ const Teams = sequelize.define('teams', {
         unique: true,
     },
     founder: Sequelize.STRING,
-    user2: Sequelize.STRING,
-    user3: Sequelize.STRING,
-    user4: Sequelize.STRING,
+    user2: Sequelize.BLOB,
+    user3: Sequelize.BLOB,
+    user4: Sequelize.BLOB,
 });
 
 client.once('ready', client => {
@@ -263,26 +263,59 @@ client.on('interactionCreate', async interaction => {
 
     if (commandName === 'teamcreatetest') {
         const teamName = interaction.options.getString('name')
-        const target = interaction.options.getUser('user')
+        const target2 = interaction.options.getUser('user2')
+        const target3 = interaction.options.getUser('user3')
+        const target4 = interaction.options.getUser('user4')
         const founder = interaction.user.username
 
         try {
             const team = await Teams.create({
                 name: teamName,
                 founder: founder,
-                user2: target,
-                user3: target,
-                user4: target,
+                user2: target2,
+                user3: target3,
+                user4: target4,
             });
-
-            addTeam(team.name, target, target, target, interaction)
 
             log(`New team ${team.name} has been created`, client);
             return interaction.reply(`Team ${team.name} has been created.`);
         }
         catch (error) {
+            if (error.name === 'SequelizeUniqueConstraintError') {
+                return interaction.reply(`That team already exists`)
+            }
             err(`Team ${teamName} failed to be created`, error, client)
+            return interaction.reply(`Something went wrong with adding the team.`)
         }
+    }
+    else if (commandName === 'teaminfo') {
+        const teamName = interaction.options.getString('name');
+
+        const team = await Teams.findOne({ where: { name: teamName } });
+
+        if (team) {
+            log(`Team ${teamName} was accessed by ${interaction.user.username}.`, client)
+            return interaction.reply(`${teamName} was created by ${team.founder} at ${team.createdAt} with members; ${team.user2}, ${team.user3}, and ${team.user4}.`);
+        }
+
+        return interaction.reply(`Could not find team ${teamName}`)
+    }
+    else if (commandName === 'disbandteam') {
+        const teamName = interaction.options.getString('teamname')
+
+        const rowCount = await Teams.destroy({ where: { name: teamName } });
+
+        if (!rowCount) return interaction.reply('That team doesn\'t exist.');
+
+        log(`Team ${teamName} was disbanded.`, client)
+        return interaction.reply('Team disbanded.');
+    }
+    else if (commandName === 'showteams') {
+        const teamList = await Teams.findAll({attributes: ['name'] });
+        const teamString = teamList.map(t => t.name).join(', ') || 'No teams created.';
+
+        log(`Team list was accessed by ${interaction.user.username}.`, client)
+        return interaction.reply(`List of teams ${teamString}`);
     }
 });
 
@@ -433,7 +466,7 @@ client.on('interactionCreate', async interaction => {
 			if (error.name === 'SequelizeUniqueConstraintError') {
 				return interaction.reply('That tag already exists.');
 			}
-            log(`Tag **${tag.name}** failed to add.`, client)
+            err(`Tag **${tag.name}** failed to add.`, error, client)
 			return interaction.reply('Something went wrong with adding a tag.');
 		}
 	}
@@ -483,13 +516,6 @@ client.on('interactionCreate', async interaction => {
     
         log(`Tag **${tagName}** was deleted.`, client)
         return interaction.reply('Tag deleted.');
-    }
-    else if (commandName === 'showteams') {
-        const teamList = await Teams.findAll({attributes: ['name'] });
-        const teamString = teamList.map(t => t.name).join(', ') || 'No teams created.';
-
-        log(`Team list was accessed by ${username}.`, client)
-        return interaction.reply(`List of teams ${teamString}`);
     }
 });
 
