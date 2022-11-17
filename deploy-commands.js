@@ -8,6 +8,7 @@ const commands = [
     new SlashCommandBuilder().setName('big_red_button').setDescription('nukes everyone'),
     new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
     new SlashCommandBuilder().setName('fuckyou').setDescription('fuck you'),
+    new SlashCommandBuilder().setName('embedtest').setDescription('test embed'),
     new SlashCommandBuilder()
         .setName('build')
         .setDescription('Builds infrastructure')
@@ -66,29 +67,40 @@ const admincommands = [
             .setName('teamcreatetest')
             .setDescription('creates a team')
             .addStringOption(option => option.setName('name').setDescription('team name').setRequired(true))
-            .addStringOption(option => option.setName('user2').setDescription('invite someone to your team'))
-            .addStringOption(option => option.setName('user3').setDescription('invite someone to your team'))
-            .addStringOption(option => option.setName('user4').setDescription('invite someone to your team')),
+            .addUserOption(option => option.setName('user2').setDescription('invite someone to your team'))
+            .addUserOption(option => option.setName('user3').setDescription('invite someone to your team'))
+            .addUserOption(option => option.setName('user4').setDescription('invite someone to your team')),
+        new SlashCommandBuilder()
+            .setName('teaminfo')
+            .setDescription('displays a team\'s members')
+            .addStringOption(option => option.setName('name').setDescription('select a team to see').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('disbandteam')
+            .setDescription('disbands a team')
+            .addStringOption(option => option.setName('teamname').setDescription('name of the team to disband').setRequired(true)),
         new SlashCommandBuilder()
             .setName('addtag')
             .setDescription('adding tags')
             .addStringOption(option => option.setName('name').setDescription('tagname').setRequired(true))
             .addStringOption(option => option.setName('description').setDescription('tagdescription').setRequired(true)),
-            new SlashCommandBuilder()
-                .setName('fetchtag')
-                .setDescription('fetches a tag')
-                .addStringOption(option => option.setName('name').setDescription('select a tag to fetch').setRequired(true)),
-            new SlashCommandBuilder()
-                .setName('taginfo')
-                .setDescription('displays a tag\'s info')
-                .addStringOption(option => option.setName('name').setDescription('displays info on the selected tag').setRequired(true)),
-            new SlashCommandBuilder()
-                .setName('showtags')
-                .setDescription('displays all created tags'),
-            new SlashCommandBuilder()
-                .setName('deletetag')
-                .setDescription('deleted selected tag')
-                .addStringOption(option => option.setName('name').setDescription('deletes selected tag').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('fetchtag')
+            .setDescription('fetches a tag')
+            .addStringOption(option => option.setName('name').setDescription('select a tag to fetch').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('taginfo')
+            .setDescription('displays a tag\'s info')
+            .addStringOption(option => option.setName('name').setDescription('displays info on the selected tag').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('showtags')
+            .setDescription('displays all created tags'),
+        new SlashCommandBuilder()
+            .setName('deletetag')
+            .setDescription('deleted selected tag')
+            .addStringOption(option => option.setName('name').setDescription('deletes selected tag').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('showteams')
+            .setDescription('displays all created teams'),
 
     ]
     

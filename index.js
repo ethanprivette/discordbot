@@ -1,4 +1,4 @@
-const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team } = require('discord.js');
+const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team, ClientUser } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction, Op } = require('sequelize');
@@ -97,9 +97,9 @@ const Teams = sequelize.define('teams', {
         unique: true,
     },
     founder: Sequelize.STRING,
-    user2: Sequelize.STRING,
-    user3: Sequelize.STRING,
-    user4: Sequelize.STRING,
+    user2: Sequelize.BLOB,
+    user3: Sequelize.BLOB,
+    user4: Sequelize.BLOB,
 });
 
 client.once('ready', client => {
@@ -164,10 +164,14 @@ function addTeam(teamName, user2, user3, user4, interaction) {
             user4: user4,
         });
 
-        return log(`team ${team.teamName} created`, client)
+        return log(`team ${team.teamName} created`, client);
     }
     catch (error) {
-        err(`Something went wrong`, error, client)
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return err('That team already exists', error, client);
+        } else {
+            return err(`Something went wrong`, error, client);
+        }
     }
 }
 
@@ -180,14 +184,14 @@ function addTag(tagName, tagDescription, interaction) {
             username: interaction.user.username,
         });
 
-        return interaction.reply(`tag ${tag.tagname} added.`);
+        return log(`tag ${tag.tagname} added.`, client);
     }
     catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
-            return interaction.reply('That tag already exists.');
+            return err('That tag already exists.', error, client);
         }
 
-        return interaction.reply('Something went wrong with adding a tag.');
+        return err('Something went wrong with adding a tag.', error, client);
     }
 }
 
@@ -195,6 +199,10 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const { commandName } = interaction;
+    const Infantry = 218
+    const Tanks = 1404
+    const Planes = 143
+    const Ships = 56
 
     if (commandName === 'embedtest') {
         if (talkedRecently.has(interaction.user.clientId)){
@@ -202,24 +210,27 @@ client.on('interactionCreate', async interaction => {
         } else {
             const testEmbed = new EmbedBuilder()
                 .setColor(0x0099FF)
-                .setTitle('Some title')
-                .setURL('https://discord.js.org/')
-                .setAuthor({ name: 'Some name', iconURL: 'https://i.imgur.com/AfFp7pu.png', url: 'https://discord.js.org' })
-                .setDescription('Some description here')
-                .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+                .setTitle('Checkoslovakia')
+                //.setURL('https://discord.js.org/')
+                .setAuthor({ name: 'Victorum', iconURL: 'https://i.imgur.com/XiAmS2H.png', url: 'https://discord.js.org' })
+                .setDescription('Amount of units checkoslovakia has currently')
+                .setThumbnail('https://i.imgur.com/XiAmS2H.png')
                 .addFields(
-                    { name: 'Regular field title', value: 'Some value here' },
-                    { name: '\u200B', value: '\u200B' },
-                    { name: 'Inline field title', value: 'Some value here', inline: true },
-                    { name: 'Inline field title', value: 'Some value here', inline: true },
+                    { name: 'Infantry', value: `${Infantry}`, inline: true },
+                    { name: 'Tanks', value: `${Tanks}`, inline: true },
+                    { name: '\u200b', value: '\u200b' },
+                    { name: 'Planes', value: `${Planes}`, inline: true },
+                    { name: 'Ships', value: `${Ships}`, inline: true },
                 )
-                .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-                .setImage('https://i.imgur.com/AfFp7pu.png')
+                //.setImage('https://i.imgur.com/AfFp7pu.png')
                 .setTimestamp()
-                .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+                //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
         
             interaction.reply({ embeds: [testEmbed] })
-        }
+        } talkedRecently.add(interaction.user.clientId);
+        setTimeout(() => {
+            talkedRecently.delete(interaction.user.clientId);
+        }, cooldown );
     }
 })
 
@@ -252,26 +263,59 @@ client.on('interactionCreate', async interaction => {
 
     if (commandName === 'teamcreatetest') {
         const teamName = interaction.options.getString('name')
-        const target = interaction.options.getUser('user')
+        const target2 = interaction.options.getUser('user2')
+        const target3 = interaction.options.getUser('user3')
+        const target4 = interaction.options.getUser('user4')
         const founder = interaction.user.username
 
         try {
-            const team = await Team.create({
+            const team = await Teams.create({
                 name: teamName,
                 founder: founder,
-                user2: target,
-                user3: target,
-                user4: target,
+                user2: target2,
+                user3: target3,
+                user4: target4,
             });
-
-            addTeam(team.name, target, target, target, interaction)
 
             log(`New team ${team.name} has been created`, client);
             return interaction.reply(`Team ${team.name} has been created.`);
         }
         catch (error) {
+            if (error.name === 'SequelizeUniqueConstraintError') {
+                return interaction.reply(`That team already exists`)
+            }
             err(`Team ${teamName} failed to be created`, error, client)
+            return interaction.reply(`Something went wrong with adding the team.`)
         }
+    }
+    else if (commandName === 'teaminfo') {
+        const teamName = interaction.options.getString('name');
+
+        const team = await Teams.findOne({ where: { name: teamName } });
+
+        if (team) {
+            log(`Team ${teamName} was accessed by ${interaction.user.username}.`, client)
+            return interaction.reply(`${teamName} was created by ${team.founder} at ${team.createdAt} with members; ${team.user2}, ${team.user3}, and ${team.user4}.`);
+        }
+
+        return interaction.reply(`Could not find team ${teamName}`)
+    }
+    else if (commandName === 'disbandteam') {
+        const teamName = interaction.options.getString('teamname')
+
+        const rowCount = await Teams.destroy({ where: { name: teamName } });
+
+        if (!rowCount) return interaction.reply('That team doesn\'t exist.');
+
+        log(`Team ${teamName} was disbanded.`, client)
+        return interaction.reply('Team disbanded.');
+    }
+    else if (commandName === 'showteams') {
+        const teamList = await Teams.findAll({attributes: ['name'] });
+        const teamString = teamList.map(t => t.name).join(', ') || 'No teams created.';
+
+        log(`Team list was accessed by ${interaction.user.username}.`, client)
+        return interaction.reply(`List of teams ${teamString}`);
     }
 });
 
@@ -289,12 +333,13 @@ client.on('interactionCreate', async interaction =>{
     const msg = interaction.options.getString('message');
 
     if (commandName === 'troll' && (interaction.user.clientId === wooperId || ethonkosID)) {
-        log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
-        chnl.send(msg)
-    } else {
-        err(`Troll failed`, error, client)
-    }
-});
+        try {
+            log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
+            chnl.send(msg)
+        } catch (error) {
+            err(`Troll failed`, error, client)
+        }
+}});
 
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
@@ -421,7 +466,7 @@ client.on('interactionCreate', async interaction => {
 			if (error.name === 'SequelizeUniqueConstraintError') {
 				return interaction.reply('That tag already exists.');
 			}
-            log(`Tag **${tag.name}** failed to add.`, client)
+            err(`Tag **${tag.name}** failed to add.`, error, client)
 			return interaction.reply('Something went wrong with adding a tag.');
 		}
 	}
