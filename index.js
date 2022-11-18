@@ -98,19 +98,15 @@ const TeamUnits = sequelize.define('units', {
     },
     infantry: {
         type: Sequelize.INTEGER,
-        defaultValue: 0,
     },
     tanks: {
         type: Sequelize.INTEGER,
-        defaultValue: 0,
     },
     planes: {
         type: Sequelize.INTEGER,
-        defaultValue: 0,
     },
     ships: {
         type: Sequelize.INTEGER,
-        defaultValue: 0,
     },
 });
 
@@ -406,33 +402,33 @@ client.on('interactionCreate', async interaction =>{
 				if (unitAmount <= 999 >= 20001) {
                     unitCooldown = 1800*unitAmount;
                     //trainUnits(teamName, unitType, unitAmount)
-					testfunction(unitType, unitAmount, true, teamName)
+					testfunction(unitType, teamName, unitAmount, true)
 				} else {
-					testfunction(unitType, unitAmount, false)
+					testfunction(unitType, teamName, unitAmount, false)
 				}
 				break;
 			case 'tanks' :
 				if (unitAmount >= 9) {
                     unitCooldown = 262500*unitAmount;
-					testfunction(unitType, unitAmount, true)
+					testfunction(unitType, teamName, unitAmount, true)
 				} else {
-					testfunction(unitType, unitAmount, false)
+					testfunction(unitType, teamName, unitAmount, false)
 				} 
 				break;
 			case 'planes' :
 				if (unitAmount >= 5) {
                     unitCooldown = 900000*unitAmount;
-					testfunction(unitType, unitAmount, true)
+					testfunction(unitType, teamName, unitAmount, true)
 				} else {
-					testfunction(unitType, unitAmount, false)
+					testfunction(unitType, teamName, unitAmount, false)
 				}
 				break;
 			case 'ships' :
 				if (unitAmount >= 2) {
                     unitCooldown = 10800000*unitAmount;
-					testfunction(unitType, unitAmount, true)
+					testfunction(unitType, teamName, unitAmount, true)
 				} else {
-					testfunction(unitType, unitAmount, false)
+					testfunction(unitType, teamName, unitAmount, false)
 				}
 				break;
 			default:
@@ -441,10 +437,10 @@ client.on('interactionCreate', async interaction =>{
 		}
 	}
 
-        async function testfunction(type, amount, over, team) {
-            log('function successful', client);
+        async function testfunction(type, team, amount, over) {
+            const rowFetch = await TeamUnits.findOne({ where: { team: team } });
+            const unitAmount = rowFetch.get(type) + amount
             log(`Current cooldown: ${unitCooldown/60000}`, client);
-            log(`${team} test`, client)
             /*
             if (over === false) {
             interaction.reply('you selected ' + amount + ' ' + type)
@@ -454,14 +450,46 @@ client.on('interactionCreate', async interaction =>{
             */
 
             try {
-                const affectedRows = await TeamUnits.update({ infantry: amount }, { where: { team: team } });
+                if (type === 'infantry') {
+                    const infantry = await TeamUnits.update({ infantry: unitAmount }, { where: { team: team } });
 
-                if (affectedRows > 0) {
-                    log(`${amount} ${type} were added to ${team}.`, client);
-                    return interaction.reply(`${amount} ${type} are being trained.`);
+                    if (infantry > 0) {
+                        log(`${amount} ${type} were added to ${team}.`, client);
+                        return interaction.reply(`${amount} ${type} are being trained.`);
+                    }
+                    log(`${team} does not exist`, client);
+                    return interaction.reply(`No team with team name ${team} found`);
                 }
-                log(`${team} does not exist`, client);
-                return interaction.reply(`No team with team name ${team} found`);
+                else if (type === 'tanks') {
+                    const tanks = await TeamUnits.update({ tanks: unitAmount }, { where: { team: team } });
+
+                    if (tanks > 0) {
+                        log(`${amount} ${type} were added to ${team}.`, client);
+                        return interaction.reply(`${amount} ${type} are being trained.`);
+                    }
+                    log(`${team} does not exist`, client);
+                    return interaction.reply(`No team with team name ${team} found`);
+                }
+                else if (type === 'planes') {
+                    const planes = await TeamUnits.update({ planes: unitAmount }, { where: { team: team } });
+
+                    if (planes > 0) {
+                        log(`${amount} ${type} were added to ${team}.`, client);
+                        return interaction.reply(`${amount} ${type} are being trained.`);
+                    }
+                    log(`${team} does not exist`, client);
+                    return interaction.reply(`No team with team name ${team} found`);
+                }
+                else if (type === 'ships') {
+                    const ships = await TeamUnits.update({ ships: unitAmount }, { where: { team: team } });
+
+                    if (ships > 0) {
+                        log(`${amount} ${type} were added to ${team}.`, client);
+                        return interaction.reply(`${amount} ${type} are being trained.`);
+                    }
+                    log(`${team} does not exist`, client);
+                    return interaction.reply(`No team with team name ${team} found`);
+                }
             }
             catch (error) {
                 err(`${amount} ${type} training failed for ${team}`, error, client);
