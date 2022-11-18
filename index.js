@@ -350,21 +350,24 @@ client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
 	
     const { commandName } = interaction;
-    const { wooperName } = 'wooper™';
-    const { ethonkosName } = 'ethonkos';
+    const wooperID = '338080523886919680';
+    const ethonkosID = '601077405481828362';
+    const birdID = '933724550640848906';
+    const userID = interaction.user.id;
     const chnl = interaction.options.getChannel('channel');
     const msg = interaction.options.getString('message');
-
+    
     if (commandName === 'troll') {
-        if (interaction.user.username != wooperName || ethonkosName) {
-            log(`Troll by ${interaction.user.username} failed`, client)
-            return interaction.reply(`hah you tried lmao`)
-        }
-        try {
-            log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
-            chnl.send(msg)
-        } catch (error) {
-            err(`Troll failed`, error, client)
+        if (userID === wooperID || userID === ethonkosID || userID === birdID) {
+            try {
+                log(`Troll channel: ${chnl}, troll message: ${msg}.`, client)
+                return chnl.send(msg)
+            } catch (error) {
+                err(`Troll failed`, error, client)
+            }
+        } else {
+        log(`Troll by ${interaction.user.username} failed`, client)
+        return interaction.reply(`hah you tried lmao`)
         }
 }});
 
@@ -466,6 +469,7 @@ client.on('interactionCreate', async interaction =>{
             interaction.reply('you selected too many ' + type)	
             }
             */
+
 
             try {
                 if (type === 'infantry') {
