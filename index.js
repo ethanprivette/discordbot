@@ -1,4 +1,4 @@
-const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team, ClientUser } = require('discord.js');
+const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team, ClientUser, ThreadMemberManager } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction, Op, where } = require('sequelize');
@@ -96,10 +96,22 @@ const TeamUnits = sequelize.define('units', {
         type: Sequelize.STRING,
         unique: true,
     },
-    infantry: Sequelize.INTEGER,
-    tanks: Sequelize.INTEGER,
-    planes: Sequelize.INTEGER, 
-    ships: Sequelize.INTEGER,  
+    infantry: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+    },
+    tanks: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+    },
+    planes: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+    },
+    ships: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+    },
 });
 
 const Teams = sequelize.define('teams', {
@@ -165,24 +177,6 @@ try {
 client.on('ready', client => {
     log('Bot is online', client)
 });
-
-function trainUnits(team, unit, amount, interaction) {
-
-    try {
-        const affectedRows = TeamUnits.update({ infantry: amount }, { where: { name: team } });
-
-        if (affectedRows > 0) {
-            log(`${amount} ${unit} were added to ${team}.`, interaction)
-            return interaction.reply(`${amount} ${unit} are being trained.`)
-        }
-        log(`${team} does not exist`, interaction)
-        return interaction.reply(`No team with team name ${team} found`)
-    }
-    catch (error) {
-        err(`${amount} ${unit} training failed for ${team}`, error, client)
-        return interaction.reply(`Something went wrong with training ${amount} ${unit}`)
-    }
-}
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
@@ -324,6 +318,14 @@ client.on('interactionCreate', async interaction => {
         log(`Team list was accessed by ${interaction.user.username}.`, client)
         return interaction.reply(`List of teams ${teamString}`);
     }
+    else if (commandName === 'showteamunits') {
+        const team = interaction.options.getString('team')
+
+        const units = await TeamUnits.findOne({ where: { team: team } });
+
+        log(`The units of ${team} were accessed by ${interaction.user.username}`, client)
+        return interaction.reply(`${team} has ${units.infantry} infantry, ${units.tanks} tanks, ${units.planes} planes, and ${units.ships} ships.`, client)
+    }
 });
 
 /*
@@ -403,8 +405,8 @@ client.on('interactionCreate', async interaction =>{
 			case 'infantry' :
 				if (unitAmount <= 999 >= 20001) {
                     unitCooldown = 1800*unitAmount;
-					testfunction(unitType, unitAmount, true)
-                    trainUnits(teamName, unitType, unitAmount, interaction)
+                    //trainUnits(teamName, unitType, unitAmount)
+					testfunction(unitType, unitAmount, true, teamName)
 				} else {
 					testfunction(unitType, unitAmount, false)
 				}
@@ -438,15 +440,33 @@ client.on('interactionCreate', async interaction =>{
 				
 		}
 	}
-        function testfunction(type, amount, over) {
-	
-	log('function successful', interaction);
-    log(`Current cooldown: ${unitCooldown/60000}`, interaction);
-	if (over === false) {
-	interaction.reply('you selected ' + amount + ' ' + type)
-	} else if (over === true) {
-	interaction.reply('you selected too many ' + type)	
-	}
+
+        async function testfunction(type, amount, over, team) {
+            log('function successful', client);
+            log(`Current cooldown: ${unitCooldown/60000}`, client);
+            log(`${team} test`, client)
+            /*
+            if (over === false) {
+            interaction.reply('you selected ' + amount + ' ' + type)
+            } else if (over === true) {
+            interaction.reply('you selected too many ' + type)	
+            }
+            */
+
+            try {
+                const affectedRows = await TeamUnits.update({ infantry: amount }, { where: { team: team } });
+
+                if (affectedRows > 0) {
+                    log(`${amount} ${type} were added to ${team}.`, client);
+                    return interaction.reply(`${amount} ${type} are being trained.`);
+                }
+                log(`${team} does not exist`, client);
+                return interaction.reply(`No team with team name ${team} found`);
+            }
+            catch (error) {
+                err(`${amount} ${type} training failed for ${team}`, error, client);
+                return interaction.reply(`Something went wrong with training ${amount} ${type}`);
+        }
 };
 
 	
@@ -632,7 +652,7 @@ client.on('interactionCreate', async interaction => {
     const { commandName } = interaction;
 
     if (commandName === 'disablebot'){
-        log(`Bot has been disabled.`, interaction)
+        log(`Bot has been disabled by ${interaction.user.username}.`, interaction)
         setTimeout(() => {
             client.destroy();
         }, 5000 );

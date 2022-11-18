@@ -26,18 +26,14 @@ const commands = [
     new SlashCommandBuilder()
         .setName('traintest')
         .setDescription('idk man')
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('units')
-                .setDescription('trains units')
-                .addStringOption(option => option.setName('teamname').setDescription('select which team to train units to').setRequired(true))
-                .addStringOption(option => option.setName('units').setDescription('select what unit to train').setRequired(true).addChoices(
-                    { name: 'infantry', value: 'infantry' },
-                    { name: 'tanks', value: 'tanks' },
-                    { name: 'planes', value: 'planes' },
-                    { name: 'ships', value: 'ships' },
-                ))
-                .addIntegerOption(option => option.setName('amount').setDescription('train multiple units').setRequired(true))),
+        .addStringOption(option => option.setName('teamname').setDescription('select which team to train units to').setRequired(true))
+        .addStringOption(option => option.setName('units').setDescription('select what unit to train').setRequired(true).addChoices(
+            { name: 'infantry', value: 'infantry' },
+            { name: 'tanks', value: 'tanks' },
+            { name: 'planes', value: 'planes' },
+            { name: 'ships', value: 'ships' },
+        ))
+        .addIntegerOption(option => option.setName('amount').setDescription('train multiple units').setRequired(true)),
     new SlashCommandBuilder()
         .setName('troll')
         .setDescription('sends a message in a specified channel')
@@ -102,6 +98,10 @@ const admincommands = [
         new SlashCommandBuilder()
             .setName('showteams')
             .setDescription('displays all created teams'),
+        new SlashCommandBuilder()
+            .setName('showteamunits')
+            .setDescription('displays a team\'s units')
+            .addStringOption(option => option.setName('team').setDescription('name of team to display').setRequired(true)),
 
     ]
     
