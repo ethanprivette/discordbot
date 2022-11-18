@@ -120,7 +120,7 @@ const Teams = sequelize.define('teams', {
     user3: Sequelize.BLOB,
     user4: Sequelize.BLOB,
 });
-
+ 
 client.once('ready', client => {
 	Tags.sync();
     Teams.sync();
@@ -246,6 +246,24 @@ client.on('interactionCreate', async interaction => {
         const target3 = interaction.options.getUser('user3')
         const target4 = interaction.options.getUser('user4')
         const founder = interaction.user.username
+        const founderFind = await Teams.findAll({ attributes: Teams.founder})
+        const user2Find = await Teams.findAll({ attributes: Teams.user2 })
+        const user3Find = await Teams.findAll({ attributes: Teams.user3 })
+        const user4Find = await Teams.findAll({ attributes: Teams.user4 })
+
+        if(founder === founderFind) {
+            log(`${founder} tried to found a new team`)
+            return interaction.reply(`You already founded a team.`)
+        } else if (target2 === user2Find) {
+            log(`${target2} tried to found a new team`)
+            return interaction.reply(`You are already in a team, use /leave to leave it.`)
+        } else if (target3 === user3Find) {
+            log(`${target3} tried to found a new team`)
+            return interaction.reply(`You are already in a team, use /leave to leave it.`)
+        } else if (target4 === user4Find) {
+            log(`${target4} tried to found a new team`)
+            return interaction.reply(`You are already in a team, use /leave to leave it.`)
+        }
 
         try {
             const team = await Teams.create({
