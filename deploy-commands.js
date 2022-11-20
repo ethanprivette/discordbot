@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Routes, CommandInteractionOptionResolver, Client, IntentsBitField } = require('discord.js');
+const { SlashCommandBuilder, Routes, CommandInteractionOptionResolver, Client, IntentsBitField, NewsChannel } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { clientId, guildId, token } = require('./config.json');
 const botIntents = new IntentsBitField(8)
@@ -75,6 +75,10 @@ const admincommands = [
             .setName('disbandteam')
             .setDescription('disbands a team')
             .addStringOption(option => option.setName('teamname').setDescription('name of the team to disband').setRequired(true)),
+        new SlashCommandBuilder()
+            .setName('leaveteam')
+            .setDescription('leave a team')
+            .addStringOption(option => option.setName('teamname').setDescription('team to leave').setRequired(true)),
         new SlashCommandBuilder()
             .setName('addtag')
             .setDescription('adding tags')

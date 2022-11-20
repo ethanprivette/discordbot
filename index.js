@@ -246,10 +246,10 @@ client.on('interactionCreate', async interaction => {
         const target3 = interaction.options.getUser('user3')
         const target4 = interaction.options.getUser('user4')
         const founder = interaction.user.username
-        const founderFind = await Teams.findAll({ attributes: Teams.founder})
-        const user2Find = await Teams.findAll({ attributes: Teams.user2 })
-        const user3Find = await Teams.findAll({ attributes: Teams.user3 })
-        const user4Find = await Teams.findAll({ attributes: Teams.user4 })
+        const founderFind = await Teams.findAll({ attributes: ['founder']})
+        const user2Find = await Teams.findAll({ attributes: ['user2'] })
+        const user3Find = await Teams.findAll({ attributes: ['user3'] })
+        const user4Find = await Teams.findAll({ attributes: ['user4'] })
 
         if(founder === founderFind) {
             log(`${founder} tried to found a new team`)
@@ -340,6 +340,38 @@ client.on('interactionCreate', async interaction => {
         log(`The units of ${team} were accessed by ${interaction.user.username}`, client)
         return interaction.reply(`${team} has ${units.infantry} infantry, ${units.tanks} tanks, ${units.planes} planes, and ${units.ships} ships.`, client)
     }
+    else if (commandName === 'leaveteam') {
+        const teamName = interaction.options.getString('teamname')
+        const name = interaction.user.username
+        const clientID = '<@' + interaction.user.id + '>'
+
+        const team = await Teams.findOne({ where: { name: teamName } });
+
+        if (name === team.founder) {
+            log(`${name} tried to disband ${team.name}`, client)
+            return interaction.reply(`You founded ${team.name}, use /disband to disband.`)
+        } 
+        else if (clientID === team.user2) {
+            await Teams.update({ user2: 'null' }, {where: { name: teamName } });
+            log(`${name} left ${teamName}`, client)
+            return interaction.reply(`You left ${teamName}`)
+        } 
+        else if (clientID === team.user3) {
+            await Teams.update({ user3: 'null' }, {where: { name: teamName } });
+            log(`${name} left ${teamName}`, client)
+            return interaction.reply(`You left ${teamName}`)
+        } 
+        else if (clientID === team.user4) {
+            await Teams.update({ user4: 'null' }, {where: { name: teamName } });
+            log(`${name} left ${teamName}`, client)
+            return interaction.reply(`You left ${teamName}`)
+        } 
+        else {
+            log(`${team.user2} is not part of a team`, client)
+            log(`${clientID}`, client)
+            return interaction.reply(`You are not apart of a team`)
+        }
+    }
 });
 
 /*
@@ -356,7 +388,7 @@ client.on('interactionCreate', async interaction =>{
     const userID = interaction.user.id;
     const chnl = interaction.options.getChannel('channel');
     const msg = interaction.options.getString('message');
-    
+
     if (commandName === 'troll') {
         if (userID === wooperID || userID === ethonkosID || userID === birdID) {
             try {
