@@ -263,7 +263,7 @@ client.on('interactionCreate', async interaction => {
         } else if (target4 === user4Find) {
             log(`${target4} tried to found a new team`)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
-        }
+        } else {
 
         try {
             const team = await Teams.create({
@@ -298,6 +298,7 @@ client.on('interactionCreate', async interaction => {
         catch (error) {
             return err(`${teamName} unit initialization failed`, error, client)
         }
+    }
     }
     else if (commandName === 'teaminfo') {
         const teamName = interaction.options.getString('name');
@@ -368,7 +369,6 @@ client.on('interactionCreate', async interaction => {
         } 
         else {
             log(`${team.user2} is not part of a team`, client)
-            log(`${clientID}`, client)
             return interaction.reply(`You are not apart of a team`)
         }
     }
