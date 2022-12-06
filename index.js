@@ -275,7 +275,6 @@ client.on('interactionCreate', async interaction => {
             });
 
             log(`New team ${team.name} has been created`, client);
-            interaction.reply(`Team ${team.name} has been created.`);
         }
         catch (error) {
             if (error.name === 'SequelizeUniqueConstraintError') {
@@ -294,9 +293,16 @@ client.on('interactionCreate', async interaction => {
             });
 
             log(`${teamUnits.team} has ${teamUnits.infantry} infantry, ${teamUnits.tanks} tanks, ${teamUnits.planes} planes, and ${teamUnits.ships} ships.`, client);
+            interaction.reply(`Team ${teamName} was created.`)
         }
         catch (error) {
-            return err(`${teamName} unit initialization failed`, error, client)
+            if (error.name === 'SequelizeUniqueConstraintError') {
+                err(`A team with name: ${teamName} already exists.`, error, client)
+                return interaction.reply(`Team ${teamName} already exists.`)
+            } else {
+                err(`${teamName} unit initialization failed`, error, client)
+                return interaction.reply(`${teamName} failed to initialize units.`)
+            }
         }
     }
     }
@@ -315,16 +321,16 @@ client.on('interactionCreate', async interaction => {
     else if (commandName === 'disbandteam') {
         const teamName = interaction.options.getString('teamname')
 
-        const rowCount = await Teams.destroy({ where: { name: teamName } });
+        const team = await Teams.findOne({ where: { name: teamName } });
 
-        if (interaction.user.username != rowCount.founder) {
+        if (interaction.user.username === team.founder) {
+            await Teams.destroy({ where: {name: teamName } })
+            log(`Team ${teamName} was disbanded by ${interaction.user.username}`, client)
+            return interaction.reply(`${teamName} was disbanded.`);
+        } else {
             log(`${interaction.user.username} tried to disband ${teamName}.`, client)
             return interaction.reply('You did not found this team, so you cannot disband it.')
         }
-        if (!rowCount) return interaction.reply('That team doesn\'t exist.');
-
-        log(`Team ${teamName} was disbanded.`, client)
-        return interaction.reply('Team disbanded.');
     }
     else if (commandName === 'showteams') {
         const teamList = await Teams.findAll({attributes: ['name'] });
@@ -343,32 +349,34 @@ client.on('interactionCreate', async interaction => {
     }
     else if (commandName === 'leaveteam') {
         const teamName = interaction.options.getString('teamname')
-        const name = interaction.user.username
+        const userName = interaction.user.username
         const clientID = '<@' + interaction.user.id + '>'
 
         const team = await Teams.findOne({ where: { name: teamName } });
 
-        if (name === team.founder) {
-            log(`${name} tried to disband ${team.name}`, client)
+        if (userName === team.founder) {
+            log(`${userName} tried to leave ${team.name}`, client)
             return interaction.reply(`You founded ${team.name}, use /disband to disband.`)
         } 
         else if (clientID === team.user2) {
+            log(`${clientID}, ${team.user2}`, client)
             await Teams.update({ user2: 'null' }, {where: { name: teamName } });
-            log(`${name} left ${teamName}`, client)
+            log(`${userName} left ${teamName}`, client)
             return interaction.reply(`You left ${teamName}`)
         } 
         else if (clientID === team.user3) {
             await Teams.update({ user3: 'null' }, {where: { name: teamName } });
-            log(`${name} left ${teamName}`, client)
+            log(`${userName} left ${teamName}`, client)
             return interaction.reply(`You left ${teamName}`)
         } 
         else if (clientID === team.user4) {
             await Teams.update({ user4: 'null' }, {where: { name: teamName } });
-            log(`${name} left ${teamName}`, client)
+            log(`${userName} left ${teamName}`, client)
             return interaction.reply(`You left ${teamName}`)
         } 
         else {
-            log(`${team.user2} is not part of a team`, client)
+            log(`${clientID} != ${team.user2}`, client)
+            log(`${userName} is not part of a team`, client)
             return interaction.reply(`You are not apart of a team`)
         }
     }
