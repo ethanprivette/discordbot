@@ -116,9 +116,9 @@ const Teams = sequelize.define('teams', {
         unique: true,
     },
     founder: Sequelize.STRING,
-    user2: Sequelize.BLOB,
-    user3: Sequelize.BLOB,
-    user4: Sequelize.BLOB,
+    user2: Sequelize.STRING,
+    user3: Sequelize.STRING,
+    user4: Sequelize.STRING,
 });
  
 client.once('ready', client => {
@@ -242,25 +242,24 @@ client.on('interactionCreate', async interaction => {
 
     if (commandName === 'teamcreatetest') {
         const teamName = interaction.options.getString('name')
-        const target2 = interaction.options.getUser('user2')
-        const target3 = interaction.options.getUser('user3')
-        const target4 = interaction.options.getUser('user4')
+        const target2 = interaction.options.getString('user2')
+        const target3 = interaction.options.getString('user3')
+        const target4 = interaction.options.getString('user4')
         const founder = interaction.user.username
-        const founderFind = await Teams.findAll({ attributes: ['founder']})
         const user2Find = await Teams.findAll({ attributes: ['user2'] })
         const user3Find = await Teams.findAll({ attributes: ['user3'] })
         const user4Find = await Teams.findAll({ attributes: ['user4'] })
 
-        if(founder === founderFind) {
+        if(await Teams.findAll({ where: { attribute: 'founder' === founder } } )) {
             log(`${founder} tried to found a new team`)
             return interaction.reply(`You already founded a team.`)
-        } else if (target2 === user2Find) {
+        } else if (target2 == user2Find) {
             log(`${target2} tried to found a new team`)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
-        } else if (target3 === user3Find) {
+        } else if (target3 == user3Find) {
             log(`${target3} tried to found a new team`)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
-        } else if (target4 === user4Find) {
+        } else if (target4 == user4Find) {
             log(`${target4} tried to found a new team`)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
         } else {
@@ -313,7 +312,7 @@ client.on('interactionCreate', async interaction => {
 
         if (team) {
             log(`Team ${teamName} was accessed by ${interaction.user.username}.`, client)
-            return interaction.reply(`${teamName} was created by ${team.founder} at ${team.createdAt} with members; ${team.user2}, ${team.user3}, and ${team.user4}.`);
+            return interaction.reply(`${teamName} was created by ${team.founder} at ${team.createdAt} with members; <@${team.user2}>, <@${team.user3}>, and <@${team.user4}>.`);
         }
 
         return interaction.reply(`Could not find team ${teamName}`)
@@ -350,7 +349,7 @@ client.on('interactionCreate', async interaction => {
     else if (commandName === 'leaveteam') {
         const teamName = interaction.options.getString('teamname')
         const userName = interaction.user.username
-        const clientID = '<@' + interaction.user.id + '>'
+        const clientID = interaction.user.id
 
         const team = await Teams.findOne({ where: { name: teamName } });
 
@@ -358,24 +357,22 @@ client.on('interactionCreate', async interaction => {
             log(`${userName} tried to leave ${team.name}`, client)
             return interaction.reply(`You founded ${team.name}, use /disband to disband.`)
         } 
-        else if (clientID === team.user2) {
-            log(`${clientID}, ${team.user2}`, client)
+        else if (clientID == team.user2) {
             await Teams.update({ user2: 'null' }, {where: { name: teamName } });
             log(`${userName} left ${teamName}`, client)
             return interaction.reply(`You left ${teamName}`)
         } 
-        else if (clientID === team.user3) {
+        else if (clientID == team.user3) {
             await Teams.update({ user3: 'null' }, {where: { name: teamName } });
             log(`${userName} left ${teamName}`, client)
             return interaction.reply(`You left ${teamName}`)
         } 
-        else if (clientID === team.user4) {
+        else if (clientID == team.user4) {
             await Teams.update({ user4: 'null' }, {where: { name: teamName } });
             log(`${userName} left ${teamName}`, client)
             return interaction.reply(`You left ${teamName}`)
         } 
         else {
-            log(`${clientID} != ${team.user2}`, client)
             log(`${userName} is not part of a team`, client)
             return interaction.reply(`You are not apart of a team`)
         }

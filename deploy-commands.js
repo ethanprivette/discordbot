@@ -64,9 +64,9 @@ const admincommands = [
             .setName('teamcreatetest')
             .setDescription('creates a team')
             .addStringOption(option => option.setName('name').setDescription('team name').setRequired(true))
-            .addUserOption(option => option.setName('user2').setDescription('invite someone to your team'))
-            .addUserOption(option => option.setName('user3').setDescription('invite someone to your team'))
-            .addUserOption(option => option.setName('user4').setDescription('invite someone to your team')),
+            .addStringOption(option => option.setName('user2').setDescription('USE CLIENT ID'))
+            .addStringOption(option => option.setName('user3').setDescription('USE CLIENT ID'))
+            .addStringOption(option => option.setName('user4').setDescription('USE CLIENT ID')),
         new SlashCommandBuilder()
             .setName('teaminfo')
             .setDescription('displays a team\'s members')
