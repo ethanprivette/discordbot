@@ -241,6 +241,9 @@ client.on('interactionCreate', async interaction => {
     const { commandName } = interaction;
 
     if (commandName === 'teamcreatetest') {
+        const wooperID = '338080523886919680'
+        const ethonkosID = '601077405481828362'
+        const clientID = interaction.user.id
         const teamName = interaction.options.getString('name')
         const target2 = interaction.options.getString('user2')
         const target3 = interaction.options.getString('user3')
@@ -250,17 +253,57 @@ client.on('interactionCreate', async interaction => {
         const user3Find = await Teams.findAll({ attributes: ['user3'] })
         const user4Find = await Teams.findAll({ attributes: ['user4'] })
 
-        if(await Teams.findAll({ where: { attribute: 'founder' === founder } } )) {
-            log(`${founder} tried to found a new team`)
+        if(clientID === wooperID || clientID === ethonkosID) {
+            try {
+                const team = await Teams.create({
+                    name: teamName,
+                    founder: founder,
+                    user2: target2,
+                    user3: target3,
+                    user4: target4,
+                });
+    
+                log(`New team ${team.name} has been created`, client);
+            }
+            catch (error) {
+                if (error.name === 'SequelizeUniqueConstraintError') {
+                    return interaction.reply(`That team already exists`)
+                }
+                err(`Team ${teamName} failed to be created`, error, client)
+                return interaction.reply(`Something went wrong with adding the team.`)
+            }
+            try {
+                const teamUnits = await TeamUnits.create({
+                    team: teamName,
+                    infantry: 0,
+                    tanks: 0,
+                    planes: 0,
+                    ships: 0,
+                });
+    
+                log(`${teamUnits.team} has ${teamUnits.infantry} infantry, ${teamUnits.tanks} tanks, ${teamUnits.planes} planes, and ${teamUnits.ships} ships.`, client);
+                interaction.reply(`Team ${teamName} was created.`)
+            }
+            catch (error) {
+                if (error.name === 'SequelizeUniqueConstraintError') {
+                    err(`A team with name: ${teamName} already exists.`, error, client)
+                    return interaction.reply(`Team ${teamName} already exists.`)
+                } else {
+                    err(`${teamName} unit initialization failed`, error, client)
+                    return interaction.reply(`${teamName} failed to initialize units.`)
+                }
+            }
+        } else if(await Teams.findAll({ attributes: ['founder'] === founder } )) {
+            log(`${founder} tried to found a new team`, client)
             return interaction.reply(`You already founded a team.`)
         } else if (target2 == user2Find) {
-            log(`${target2} tried to found a new team`)
+            log(`${target2} tried to found a new team`, client)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
         } else if (target3 == user3Find) {
-            log(`${target3} tried to found a new team`)
+            log(`${target3} tried to found a new team`, client)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
         } else if (target4 == user4Find) {
-            log(`${target4} tried to found a new team`)
+            log(`${target4} tried to found a new team`, client)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
         } else {
 
@@ -323,7 +366,7 @@ client.on('interactionCreate', async interaction => {
         const team = await Teams.findOne({ where: { name: teamName } });
 
         if (interaction.user.username === team.founder) {
-            await Teams.destroy({ where: {name: teamName } })
+            await Teams.destroy({ where: {name: teamName }, force: true })
             log(`Team ${teamName} was disbanded by ${interaction.user.username}`, client)
             return interaction.reply(`${teamName} was disbanded.`);
         } else {
@@ -336,7 +379,7 @@ client.on('interactionCreate', async interaction => {
         const teamString = teamList.map(t => t.name).join(', ') || 'No teams created.';
 
         log(`Team list was accessed by ${interaction.user.username}.`, client)
-        return interaction.reply(`List of teams ${teamString}`);
+        return interaction.reply(`List of teams: ${teamString}`);
     }
     else if (commandName === 'showteamunits') {
         const team = interaction.options.getString('team')
@@ -379,9 +422,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-/*
-testin
-*/
+//ADMIN COMMANDS HERE
 
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
@@ -406,7 +447,22 @@ client.on('interactionCreate', async interaction =>{
         log(`Troll by ${interaction.user.username} failed`, client)
         return interaction.reply(`hah you tried lmao`)
         }
-}});
+    } else if (commandName === 'disbandallteams') {
+        if (userID === wooperID || userID === ethonkosID) {
+            try {
+                await Teams.destroy({ where: { founder: interaction.user.username }, force: true })
+                log(`All teams created by ${interaction.user.username} were destroyed.`, client)
+                return interaction.reply(`Teams created by ${interaction.user.username} were destroyed`)
+            } catch (error) {
+                err(`Something went wrong with deleting teams`, error, client)
+                return interaction.reply(`Something went wrong, check logs`)
+            }
+        } else {
+            log(`${interaction.user.username} tried to delete teams`, client)
+            return interaction.reply(`This is an admin only action`)
+        }
+    }
+});
 
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;

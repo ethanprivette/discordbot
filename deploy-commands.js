@@ -60,6 +60,7 @@ const admincommands = [
         new SlashCommandBuilder().setName('admintest').setDescription('testing command for admins'),
         new SlashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
         new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
+        new SlashCommandBuilder().setName('disbandallteams').setDescription('disbands all teams made by user'),
         new SlashCommandBuilder()
             .setName('teamcreatetest')
             .setDescription('creates a team')
