@@ -6,6 +6,13 @@ const talkedRecently = new Set();
 const { Users, CurrencyShop } = require('./dbObjects.js');
 const { SqlError } = require('mariadb');
 
+var now = new Date();
+var sentAlready = 0;
+var updateDay = now.getDay()
+var updateMonth = now.getMonth()
+var updateYear = now.getFullYear()
+var update = `${updateDay}-${updateMonth}-${updateYear}`
+
 global.cooldown = 10000;
 global.unitCooldown = 60000;
 
@@ -21,17 +28,26 @@ const currency = new Collection();
 function log(msg, key) {
 	var undef;
 	console.log(msg);
-	var now = new Date();
 	    if (key === undef) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
-				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
+                if (sentAlready == 1) {
+                    channel.then(channel=>channel.send(`*${msg}*`))
+                } else if (sentAlready == 0) {
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*`))
+                    sentAlready = 1
+                }
 	    });
         } else {
 		        const channel = client.channels.fetch('1017927935488966697');
-			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*`))
+                if (sentAlready == 1) {
+                    channel.then(channel=>channel.send(`*${msg}*`))
+                } else if (sentAlready == 0) {
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*`))
+                    sentAlready = 1
+                }
         }
-    }
+}
 
 function err(msg, err, key) {
 	var undef;
@@ -64,15 +80,11 @@ try {
 
 
 const Times = sequelize.define("Times", {
-	name: {
-		type: Sequelize.STRING,
-	},
-  time: {
-    type: Sequelize.STRING,
-  },
-},
-{
-  timestamps: false,
+	name: Sequelize.STRING,
+    day: Sequelize.STRING,
+    month: Sequelize.STRING,
+    year: Sequelize.STRING,
+    timestamps: false,
 });
 
 
@@ -129,44 +141,63 @@ client.once('ready', client => {
 
 	log(`Logged in as ${client.user.tag}!`, client)	
 });
+
 //
 
 try {
 	
-	client.on('ready', client => {
+	client.on('ready', async client => {
 		const now = new Date();
 		const year = now.getFullYear();
 		const mes = now.getMonth()+1;
 		const dia = now.getDate()+1;
-		const fecha = `${dia}-${mes}-${year}`;
-		const time = Times.findOne({ where: { time: fecha } });
+		const time = await Times.findOne({ where: { name: 'time' } });
 		log(time, client)
 		const channel = client.channels.fetch('1017927935488966697');
 		if (time) {
-			Times.destroy({
+			await Times.destroy({
 				where: {},
 				truncate: true
 			});
-			const timecreate = Times.create({
+			await Times.create({
 					name: 'time',
-					time: fecha,
+					day: dia,
+                    month: mes,
+                    year: year
 				});
 			return channel.then(channel=>channel.send(`first option occurred`))
 			
-		}
-			Times.destroy({
+		} else {
+		    await Times.destroy({
 				where: {},
 				truncate: true
 			});
-			const timecreate = Times.create({
-					name: 'time',
-					time: fecha,
-				});
+			await Times.create({
+                    name: 'time',
+                    day: dia,
+                    month: mes,
+                    year: year
+                });
 
 			return channel.then(channel=>channel.send(`second option occurred`))
+        }
 	});
 	} catch (error) {
 	err('youfuckedupwooper', error, client)
+}
+
+try {
+    client.on('ready', async client => {
+    var time = await Times.findOne({ where: { name: 'time' } })
+    if (now.getDate() != time.day) {
+        sentAlready = 0;
+        await Times.update({ time: update }, { where: { name: 'time' } })
+        log(time, client)
+    } else {
+        log(time, client)
+    }})
+} catch (error) {
+    err(`dumbass`, error)
 }
 
 //
@@ -376,7 +407,7 @@ client.on('interactionCreate', async interaction => {
     }
     else if (commandName === 'showteams') {
         const teamList = await Teams.findAll({attributes: ['name'] });
-        const teamString = teamList.map(t => t.name).join(', ') || 'No teams created.';
+        const teamString = teamList.map(t => t.name).join(', ') || 'no teams created.';
 
         log(`Team list was accessed by ${interaction.user.username}.`, client)
         return interaction.reply(`List of teams: ${teamString}`);
