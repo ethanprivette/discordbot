@@ -56,11 +56,21 @@ function err(msg, err, key) {
 	    if (key === undef) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
-				    channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*: ${err}`))
+				if (sentAlready == 1) {
+                    channel.then(channel=>channel.send(`\`\`\`diff${msg}\`\`\``))
+                } else if (sentAlready == 0) {
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n \`\`\`diff${msg}\`\`\``))
+                    sentAlready = 1
+                }
 	    });
         } else {
 		        const channel = client.channels.fetch('1017927935488966697');
-			        channel.then(channel=>channel.send(`**${now.toLocaleString()}** : *${msg}*: ${err}`))
+			    if (sentAlready == 1) {
+                    channel.then(channel=>channel.send(`\`\`\`diff${msg}\`\`\``))
+                } else if (sentAlready == 0) {
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n \`\`\`diff${msg}\`\`\``))
+                    sentAlready = 1
+                }
         }
     }
 
@@ -79,12 +89,11 @@ try {
   }
 
 
-const Times = sequelize.define("Times", {
+const Times = sequelize.define('times', {
 	name: Sequelize.STRING,
     day: Sequelize.STRING,
     month: Sequelize.STRING,
     year: Sequelize.STRING,
-    timestamps: false,
 });
 
 
@@ -108,6 +117,7 @@ const TeamUnits = sequelize.define('units', {
         type: Sequelize.STRING,
         unique: true,
     },
+    founder: Sequelize.STRING,
     infantry: {
         type: Sequelize.INTEGER,
     },
@@ -143,7 +153,7 @@ client.once('ready', client => {
 });
 
 //
-
+/*
 try {
 	
 	client.on('ready', async client => {
@@ -159,7 +169,7 @@ try {
 				where: {},
 				truncate: true
 			});
-			await Times.create({
+			const timeCreate = await Times.create({
 					name: 'time',
 					day: dia,
                     month: mes,
@@ -172,7 +182,7 @@ try {
 				where: {},
 				truncate: true
 			});
-			await Times.create({
+			const timeCreate = await Times.create({
                     name: 'time',
                     day: dia,
                     month: mes,
@@ -183,7 +193,7 @@ try {
         }
 	});
 	} catch (error) {
-	err('youfuckedupwooper', error, client)
+	    err('youfuckedupwooper', error, client)
 }
 
 try {
@@ -199,6 +209,7 @@ try {
 } catch (error) {
     err(`dumbass`, error)
 }
+*/
 
 //
 client.on('ready', client => {
@@ -306,6 +317,7 @@ client.on('interactionCreate', async interaction => {
             try {
                 const teamUnits = await TeamUnits.create({
                     team: teamName,
+                    founder: founder,
                     infantry: 0,
                     tanks: 0,
                     planes: 0,
@@ -359,6 +371,7 @@ client.on('interactionCreate', async interaction => {
         try {
             const teamUnits = await TeamUnits.create({
                 team: teamName,
+                founder: founder,
                 infantry: 0,
                 tanks: 0,
                 planes: 0,
@@ -398,6 +411,7 @@ client.on('interactionCreate', async interaction => {
 
         if (interaction.user.username === team.founder) {
             await Teams.destroy({ where: {name: teamName }, force: true })
+            await TeamUnits.destroy({ where: { team: teamName }, force: true })
             log(`Team ${teamName} was disbanded by ${interaction.user.username}`, client)
             return interaction.reply(`${teamName} was disbanded.`);
         } else {
