@@ -57,20 +57,20 @@ function err(msg, err, key) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
 				if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`\`\`\`diff${msg}\`\`\``))
+                    channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff${err}\`\`\``))
                 } else if (sentAlready == 0) {
-                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n \`\`\`diff${msg}\`\`\``))
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff${err}\`\`\``))
                     sentAlready = 1
                 }
 	    });
         } else {
-		        const channel = client.channels.fetch('1017927935488966697');
-			    if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`\`\`\`diff${msg}\`\`\``))
-                } else if (sentAlready == 0) {
-                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n \`\`\`diff${msg}\`\`\``))
-                    sentAlready = 1
-                }
+		    const channel = client.channels.fetch('1017927935488966697');
+            if (sentAlready == 1) {
+                channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff${err}\`\`\``))
+            } else if (sentAlready == 0) {
+                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff${err}\`\`\``))
+                sentAlready = 1
+            }
         }
     }
 
@@ -90,10 +90,14 @@ try {
 
 
 const Times = sequelize.define('times', {
-	name: Sequelize.STRING,
+	name: {
+        type: Sequelize.STRING,
+        unique: true,
+    },
     day: Sequelize.STRING,
     month: Sequelize.STRING,
     year: Sequelize.STRING,
+    timestamps: false,
 });
 
 
@@ -158,10 +162,10 @@ try {
 	
 	client.on('ready', async client => {
 		const now = new Date();
-		const year = now.getFullYear();
-		const mes = now.getMonth()+1;
-		const dia = now.getDate()+1;
-		const time = await Times.findOne({ where: { name: 'time' } });
+		const year = `${now.getFullYear()}`;
+		const mes = `${now.getMonth()+1}`;
+		const dia = `${now.getDate()+1}`;
+		const time = Times.findOne({ where: { name: 'time' } });
 		log(time, client)
 		const channel = client.channels.fetch('1017927935488966697');
 		if (time) {
@@ -169,11 +173,11 @@ try {
 				where: {},
 				truncate: true
 			});
-			const timeCreate = await Times.create({
+			await Times.create({
 					name: 'time',
 					day: dia,
                     month: mes,
-                    year: year
+                    year: year,
 				});
 			return channel.then(channel=>channel.send(`first option occurred`))
 			
@@ -182,23 +186,23 @@ try {
 				where: {},
 				truncate: true
 			});
-			const timeCreate = await Times.create({
+			await Times.create({
                     name: 'time',
                     day: dia,
                     month: mes,
-                    year: year
+                    year: year,
                 });
 
 			return channel.then(channel=>channel.send(`second option occurred`))
         }
 	});
 	} catch (error) {
-	    err('youfuckedupwooper', error, client)
+	err('youfuckedupwooper', error, client)
 }
 
 try {
     client.on('ready', async client => {
-    var time = await Times.findOne({ where: { name: 'time' } })
+    const time = await Times.findOne({ where: { name: 'time' } })
     if (now.getDate() != time.day) {
         sentAlready = 0;
         await Times.update({ time: update }, { where: { name: 'time' } })
@@ -309,6 +313,7 @@ client.on('interactionCreate', async interaction => {
             }
             catch (error) {
                 if (error.name === 'SequelizeUniqueConstraintError') {
+                    err(`${teamName} already exists`, err, client)
                     return interaction.reply(`That team already exists`)
                 }
                 err(`Team ${teamName} failed to be created`, error, client)
