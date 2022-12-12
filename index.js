@@ -57,18 +57,18 @@ function err(msg, err, key) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
 				if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff${err}\`\`\``))
+                    channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff - ${err} \`\`\``))
                 } else if (sentAlready == 0) {
-                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff${err}\`\`\``))
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff - ${err} \`\`\``))
                     sentAlready = 1
                 }
 	    });
         } else {
 		    const channel = client.channels.fetch('1017927935488966697');
             if (sentAlready == 1) {
-                channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff${err}\`\`\``))
+                channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff - ${err} \`\`\``))
             } else if (sentAlready == 0) {
-                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff${err}\`\`\``))
+                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff - ${err} \`\`\``))
                 sentAlready = 1
             }
         }
