@@ -57,18 +57,18 @@ function err(msg, err, key) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
 				if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff - ${err} \`\`\``))
+                    channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff \n - ${err} \`\`\``))
                 } else if (sentAlready == 0) {
-                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff - ${err} \`\`\``))
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff \n - ${err} \`\`\``))
                     sentAlready = 1
                 }
 	    });
         } else {
 		    const channel = client.channels.fetch('1017927935488966697');
             if (sentAlready == 1) {
-                channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff - ${err} \`\`\``))
+                channel.then(channel=>channel.send(`*${msg}*: \`\`\`diff \n - ${err} \`\`\``))
             } else if (sentAlready == 0) {
-                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff - ${err} \`\`\``))
+                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \`\`\`diff \n - ${err} \`\`\``))
                 sentAlready = 1
             }
         }
@@ -313,7 +313,7 @@ client.on('interactionCreate', async interaction => {
             }
             catch (error) {
                 if (error.name === 'SequelizeUniqueConstraintError') {
-                    err(`${teamName} already exists`, err, client)
+                    err(`${teamName} already exists`, error, client)
                     return interaction.reply(`That team already exists`)
                 }
                 err(`Team ${teamName} failed to be created`, error, client)
