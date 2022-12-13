@@ -9,9 +9,8 @@ const { SqlError } = require('mariadb');
 var now = new Date();
 var sentAlready = 0;
 var updateDay = now.getDay()
-var updateMonth = now.getMonth()
+var updateMonth = now.getMonth()+1
 var updateYear = now.getFullYear()
-var update = `${updateDay}-${updateMonth}-${updateYear}`
 
 global.cooldown = 10000;
 global.unitCooldown = 60000;
@@ -34,7 +33,7 @@ function log(msg, key) {
                 if (sentAlready == 1) {
                     channel.then(channel=>channel.send(`>>> *${msg}*`))
                 } else if (sentAlready == 0) {
-                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n >>> *${msg}*`))
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n>>> *${msg}*`))
                     sentAlready = 1
                 }
 	    });
@@ -97,7 +96,6 @@ const Times = sequelize.define('times', {
     day: Sequelize.STRING,
     month: Sequelize.STRING,
     year: Sequelize.STRING,
-    timestamps: false,
 });
 
 
@@ -154,15 +152,15 @@ client.once('ready', async client => {
 });
 
 //
-/*
+
 try {
 	
 	client.on('ready', async client => {
 		const now = new Date();
 		const year = `${now.getFullYear()}`;
 		const mes = `${now.getMonth()+1}`;
-		const dia = `${now.getDate()+1}`;
-		const time = Times.findOne({ where: { name: 'time' } });
+		const dia = `${now.getDate()}`;
+		const time = Times.findOne({ where: { name: 'time' } }) ?? null;
 		log(time, client)
 		const channel = client.channels.fetch('1017927935488966697');
 		if (time) {
@@ -176,7 +174,7 @@ try {
                     month: mes,
                     year: year,
 				});
-			return channel.then(channel=>channel.send(`first option occurred`))
+			log(`first option occurred`, client)
 			
 		} else {
 		    await Times.destroy({
@@ -190,19 +188,22 @@ try {
                     year: year,
                 });
 
-			return channel.then(channel=>channel.send(`second option occurred`))
+			log(`second option occurred`, client)
         }
 	});
 	} catch (error) {
 	err('youfuckedupwooper', error, client)
 }
 
+
 try {
     client.on('ready', async client => {
     const time = await Times.findOne({ where: { name: 'time' } })
     if (now.getDate() != time.day) {
         sentAlready = 0;
-        await Times.update({ time: update }, { where: { name: 'time' } })
+        await Times.update({ day: updateDay }, { where: { name: 'time' } })
+        await Times.update({ month: updateMonth }, { where: { name: 'time' } })
+        await Times.update({ year: updateYear }, { where: { name: 'time' } })
         log(time, client)
     } else {
         log(time, client)
@@ -210,7 +211,7 @@ try {
 } catch (error) {
     err(`dumbass`, error)
 }
-*/
+
 
 //
 client.on('ready', client => {
@@ -530,7 +531,7 @@ client.on('interactionCreate', async interaction =>{
         if (userID === wooperID || userID === ethonkosID) {
 
             try {
-                await TeamUnits.drop()
+                await Times.drop()
                 log(`Unit table dropped`, client)
                 return interaction.reply(`table dropped`)
             } catch (error) {
