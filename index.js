@@ -32,7 +32,7 @@ function log(msg, key) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
                 if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`* >>> ${msg}*`))
+                    channel.then(channel=>channel.send(`>>> *${msg}*`))
                 } else if (sentAlready == 0) {
                     channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n >>> *${msg}*`))
                     sentAlready = 1
@@ -41,7 +41,7 @@ function log(msg, key) {
         } else {
 		        const channel = client.channels.fetch('1017927935488966697');
                 if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`* >>> ${msg}*`))
+                    channel.then(channel=>channel.send(`>>> *${msg}*`))
                 } else if (sentAlready == 0) {
                     channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n >>> *${msg}*`))
                     sentAlready = 1
@@ -57,7 +57,7 @@ function err(msg, err, key) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
 				if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(` > *${msg}*: \n >>> \`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
+                    channel.then(channel=>channel.send(` >>> *${msg}*: \n \`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
                     } else if (sentAlready == 0) {
                     channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n >>> \`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
                     sentAlready = 1
@@ -66,7 +66,7 @@ function err(msg, err, key) {
         } else {
 		    const channel = client.channels.fetch('1017927935488966697');
             if (sentAlready == 1) {
-                channel.then(channel=>channel.send(`*${msg}*: \n >>> \`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
+                channel.then(channel=>channel.send(` >>> *${msg}*: \n\`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
             } else if (sentAlready == 0) {
                 channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n >>> \`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
                 sentAlready = 1
