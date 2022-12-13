@@ -57,18 +57,18 @@ function err(msg, err, key) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
 				if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`asni\r\n\u001B[2;31m${err}\`\`\``))
+                    channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
                     } else if (sentAlready == 0) {
-                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`asni\r\n\u001B[2;31m${err}\`\`\``))
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
                     sentAlready = 1
                 }
 	    });
         } else {
 		    const channel = client.channels.fetch('1017927935488966697');
             if (sentAlready == 1) {
-                channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`asni\r\n\u001B[2;31m${err}\`\`\``))
+                channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
             } else if (sentAlready == 0) {
-                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`asni\r\n\u001B[2;31m${err}\`\`\``))
+                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`ansi\r\n\u001B[2;31m${err}\`\`\``))
                 sentAlready = 1
             }
         }
@@ -147,11 +147,8 @@ const Teams = sequelize.define('teams', {
     user4: Sequelize.STRING,
 });
  
-client.once('ready', client => {
-	Tags.sync();
-    Teams.sync();
-	Times.sync();
-    TeamUnits.sync();
+client.once('ready', async client => {
+	await sequelize.sync({ alter: true });
 
 	log(`Logged in as ${client.user.tag}!`, client)	
 });
