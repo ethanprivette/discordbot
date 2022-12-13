@@ -58,7 +58,7 @@ function err(msg, err, key) {
 			    const channel = client.channels.fetch('1017927935488966697');
 				if (sentAlready == 1) {
                     channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`asni\n [2;31m${err}\`\`\``))
-                } else if (sentAlready == 0) {
+                    } else if (sentAlready == 0) {
                     channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`asni\n [2;31m${err}\`\`\``))
                     sentAlready = 1
                 }
@@ -499,8 +499,10 @@ client.on('interactionCreate', async interaction =>{
         }
     } else if (commandName === 'disbandallteams') {
         if (userID === wooperID || userID === ethonkosID) {
+            const team = await Teams.findOne({ where: { founder: interaction.user.username } })
             try {
-                await Teams.destroy({ where: { founder: interaction.user.username }, force: true })
+                await Teams.destroy({ where: { name: team.name } })
+                await TeamUnits.destroy({ where: { team: team.name } })
                 log(`All teams created by ${interaction.user.username} were destroyed.`, client)
                 return interaction.reply(`Teams created by ${interaction.user.username} were destroyed`)
             } catch (error) {
@@ -510,6 +512,22 @@ client.on('interactionCreate', async interaction =>{
         } else {
             log(`${interaction.user.username} tried to delete teams`, client)
             return interaction.reply(`This is an admin only action`)
+        }
+    } else if (commandName === 'restoreteam') {
+        if (userID === wooperID || userID === ethonkosID) {
+            const teamName = interaction.options.getString('team')
+
+            try {
+                await Teams.restore({ where: { name: teamName } })
+                log(`${teamName} was restored`, client)
+                return interaction.reply(`Team was restored.`)
+            } catch (error) {
+                err(`Something went wrong`, error, client)
+                return interaction.reply(`Check logs.`)
+            }
+        } else {
+            log(`${interaction.user.username} tried to restore a team`, client)
+            return interaction.reply(`This is an admin only command.`)
         }
     }
 });
