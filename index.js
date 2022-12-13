@@ -526,6 +526,22 @@ client.on('interactionCreate', async interaction =>{
             log(`${interaction.user.username} tried to restore a team`, client)
             return interaction.reply(`This is an admin only command.`)
         }
+    } else if (commandName === 'droptable') {
+        if (userID === wooperID || userID === ethonkosID) {
+            const table = interaction.options.getString('table')
+
+            try {
+                await TeamUnits.drop()
+                log(`Unit table dropped`, client)
+                return interaction.reply(`table dropped`)
+            } catch (error) {
+                log(`something went wrong`, error, client)
+                return interaction.reply(`check logs`)
+            }
+        } else {
+            log(`${interaction.user.username} tried to drop a table`, client)
+            return interaction.reply(`This is an admin only interation`)
+        }
     }
 });
 

@@ -62,6 +62,10 @@ const admincommands = [
         new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
         new SlashCommandBuilder().setName('disbandallteams').setDescription('disbands all teams made by user'),
         new SlashCommandBuilder()
+            .setName('droptable')
+            .setDescription('drops selected table')
+            .addStringOption(option=> option.setName('table').setDescription('table to drop').setRequired(true)),   
+        new SlashCommandBuilder()
             .setName('restoreteam')
             .setDescription('restores the selected team')
             .addStringOption(option=> option.setName('team').setDescription('team name').setRequired(true)),
