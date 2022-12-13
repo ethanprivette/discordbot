@@ -528,7 +528,6 @@ client.on('interactionCreate', async interaction =>{
         }
     } else if (commandName === 'droptable') {
         if (userID === wooperID || userID === ethonkosID) {
-            const table = interaction.options.getString('table')
 
             try {
                 await TeamUnits.drop()
