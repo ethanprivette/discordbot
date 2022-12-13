@@ -57,9 +57,9 @@ function err(msg, err, key) {
             client.on('ready', client => {
 			    const channel = client.channels.fetch('1017927935488966697');
 				if (sentAlready == 1) {
-                    channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`asni\n [2;31m${err}\`\`\``))
+                    channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`asni\n[2;31m${err}\`\`\``))
                     } else if (sentAlready == 0) {
-                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`asni\n [2;31m${err}\`\`\``))
+                    channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`asni\n[2;31m${err}\`\`\``))
                     sentAlready = 1
                 }
 	    });
@@ -68,7 +68,7 @@ function err(msg, err, key) {
             if (sentAlready == 1) {
                 channel.then(channel=>channel.send(`*${msg}*: \n\`\`\`asni\n[2;31m${err}\`\`\``))
             } else if (sentAlready == 0) {
-                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`asni\n [2;31m${err}\`\`\``))
+                channel.then(channel=>channel.send(`**${now.toLocaleString()}** \n *${msg}*: \n\`\`\`asni\n[2;31m${err}\`\`\``))
                 sentAlready = 1
             }
         }
