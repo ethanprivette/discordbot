@@ -174,7 +174,7 @@ try {
                     month: mes,
                     year: year,
 				});
-			log(`first option occurred`, client)
+			log(`Time initialized`, client)
 			
 		} else {
 		    await Times.destroy({
@@ -188,7 +188,7 @@ try {
                     year: year,
                 });
 
-			log(`second option occurred`, client)
+			log(`Time initialized`, client)
         }
 	});
 	} catch (error) {
@@ -201,10 +201,10 @@ try {
     const time = await Times.findOne({ where: { name: 'time' } })
     if (now.getDate() != time.day) {
         sentAlready = 0;
+        log(`Time updated ${time}`, client)
         await Times.update({ day: updateDay }, { where: { name: 'time' } })
         await Times.update({ month: updateMonth }, { where: { name: 'time' } })
         await Times.update({ year: updateYear }, { where: { name: 'time' } })
-        log(time, client)
     } else {
         log(time, client)
     }})
@@ -222,28 +222,25 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const { commandName } = interaction;
-    const Infantry = 218
-    const Tanks = 1404
-    const Planes = 143
-    const Ships = 56
 
     if (commandName === 'embedtest') {
         if (talkedRecently.has(interaction.user.clientId)){
             interaction.reply({ content: 'Please run the command again in 20 seconds.'})
         } else {
+            const team = await TeamUnits.findOne({ where: { team: 'embedtest' } })
             const testEmbed = new EmbedBuilder()
                 .setColor(0x0099FF)
-                .setTitle('Checkoslovakia')
+                .setTitle(`${team.team}`)
                 //.setURL('https://discord.js.org/')
                 .setAuthor({ name: 'Victorum', iconURL: 'https://i.imgur.com/XiAmS2H.png', url: 'https://discord.js.org' })
-                .setDescription('Amount of units checkoslovakia has currently')
+                .setDescription(`Amount of units ${team.team} has currently`)
                 .setThumbnail('https://i.imgur.com/XiAmS2H.png')
                 .addFields(
-                    { name: 'Infantry', value: `${Infantry}`, inline: true },
-                    { name: 'Tanks', value: `${Tanks}`, inline: true },
+                    { name: 'Infantry', value: `${team.infantry}`, inline: true },
+                    { name: 'Tanks', value: `${team.tanks}`, inline: true },
                     { name: '\u200b', value: '\u200b' },
-                    { name: 'Planes', value: `${Planes}`, inline: true },
-                    { name: 'Ships', value: `${Ships}`, inline: true },
+                    { name: 'Planes', value: `${team.planes}`, inline: true },
+                    { name: 'Ships', value: `${team.ships}`, inline: true },
                 )
                 //.setImage('https://i.imgur.com/AfFp7pu.png')
                 .setTimestamp()
@@ -542,6 +539,34 @@ client.on('interactionCreate', async interaction =>{
             log(`${interaction.user.username} tried to drop a table`, client)
             return interaction.reply(`This is an admin only interation`)
         }
+    } else if (commandName === 'updateembed') {
+        if (userID === wooperID || userID === ethonkosID) {
+            const team = await TeamUnits.findOne({ where: { team: 'updatetest' } })
+            try {
+                const updatetest = new EmbedBuilder()
+                    .setColor(0x0099ff)
+                    .setTitle(team.team)
+                    .setAuthor({ name: 'Victorum', iconURL: 'https://i.imgur.com/XiAmS2H.png', url: 'https://discord.js.org' })
+                    .setDescription(`test`)
+                    .addFields(
+                        { name: 'infantry', value: `${team.infantry}`, inline: true },
+                        { name: 'tanks', value: `${team.tanks}`, inline: true },
+                        { name: '**---------------**', value: '**---------------**', },
+                        { name: 'planes', value: `${team.planes}`, inline: true },
+                        { name: 'ships', value: `${team.ships}`, inline: true },
+                    )
+                    .setTimestamp()
+
+                    log(`updateembed test was used`, client)
+                    return interaction.reply({ embeds: [updatetest] })
+            } catch (error) {
+                err(`something went wrong`, error, client)
+                return interaction.reply(`check logs`)
+            }
+        } else {
+            log(`${interaction.user.username} tried to use updateembed`)
+            return interaction.reply(`this is an admin only command`)
+        }
     }
 });
 
@@ -591,50 +616,58 @@ client.on('interactionCreate', async interaction =>{
 		var over;
 		const unitAmount = interaction.options.getInteger('amount'); //tag amount
 		const unitType = interaction.options.getString('units'); //tag description
-        const teamName = interaction.options.getString('teamname');
-		switch (unitType) {
-			case 'infantry' :
-				if (unitAmount <= 999 >= 20001) {
-                    unitCooldown = 1800*unitAmount;
-                    //trainUnits(teamName, unitType, unitAmount)
-					testfunction(unitType, teamName, unitAmount, true)
-				} else {
-					testfunction(unitType, teamName, unitAmount, false)
-				}
-				break;
-			case 'tanks' :
-				if (unitAmount >= 9) {
-                    unitCooldown = 262500*unitAmount;
-					testfunction(unitType, teamName, unitAmount, true)
-				} else {
-					testfunction(unitType, teamName, unitAmount, false)
-				} 
-				break;
-			case 'planes' :
-				if (unitAmount >= 5) {
-                    unitCooldown = 900000*unitAmount;
-					testfunction(unitType, teamName, unitAmount, true)
-				} else {
-					testfunction(unitType, teamName, unitAmount, false)
-				}
-				break;
-			case 'ships' :
-				if (unitAmount >= 2) {
-                    unitCooldown = 10800000*unitAmount;
-					testfunction(unitType, teamName, unitAmount, true)
-				} else {
-					testfunction(unitType, teamName, unitAmount, false)
-				}
-				break;
-			default:
-			break;
-				
-		}
+        const teamName = await Teams.findOne({ where: { founder: interaction.user.username } })
+        try {
+            switch (unitType) {
+                case 'infantry' :
+                    if (unitAmount <= 999 >= 20001) {
+                        unitCooldown = 1800*unitAmount;
+                        //trainUnits(teamName, unitType, unitAmount)
+                        testfunction(unitType, teamName, unitAmount, true)
+                    } else {
+                        testfunction(unitType, teamName, unitAmount, false)
+                    }
+                    break;
+                case 'tanks' :
+                    if (unitAmount >= 9) {
+                        unitCooldown = 262500*unitAmount;
+                        testfunction(unitType, teamName, unitAmount, true)
+                    } else {
+                        testfunction(unitType, teamName, unitAmount, false)
+                    } 
+                    break;
+                case 'planes' :
+                    if (unitAmount >= 5) {
+                        unitCooldown = 900000*unitAmount;
+                        testfunction(unitType, teamName, unitAmount, true)
+                    } else {
+                        testfunction(unitType, teamName, unitAmount, false)
+                    }
+                    break;
+                case 'ships' :
+                    if (unitAmount >= 2) {
+                        unitCooldown = 10800000*unitAmount;
+                        testfunction(unitType, teamName, unitAmount, true)
+                    } else {
+                        testfunction(unitType, teamName, unitAmount, false)
+                    }
+                    break;
+                default:
+                break;
+                    
+            }
+        } catch (error) {
+            err(`something went wrong`, error, client)
+            return interaction.reply(`check logs`)
+        }
 	}
 
         async function testfunction(type, team, amount, over) {
-            const rowFetch = await TeamUnits.findOne({ where: { team: team } });
-            const unitAmount = rowFetch.get(type) + amount
+            const teamName = await TeamUnits.findOne({ where: { founder: interaction.user.username } })
+            const infantryAmount = teamName.infantry + amount
+            const tanksAmount = teamName.tanks + amount
+            const planesAmount = teamName.planes + amount
+            const shipsAmount = teamName.ships + amount
             log(`Current cooldown: ${unitCooldown/60000}`, client);
             /*
             if (over === false) {
@@ -647,7 +680,7 @@ client.on('interactionCreate', async interaction =>{
 
             try {
                 if (type === 'infantry') {
-                    const infantry = await TeamUnits.update({ infantry: unitAmount }, { where: { team: team } });
+                    const infantry = await TeamUnits.update({ infantry: infantryAmount }, { where: { founder: interaction.user.username } });
 
                     if (infantry > 0) {
                         log(`${amount} ${type} were added to ${team}.`, client);
@@ -657,7 +690,7 @@ client.on('interactionCreate', async interaction =>{
                     return interaction.reply(`No team with team name ${team} found`);
                 }
                 else if (type === 'tanks') {
-                    const tanks = await TeamUnits.update({ tanks: unitAmount }, { where: { team: team } });
+                    const tanks = await TeamUnits.update({ tanks: tanksAmount }, { where: { founder: interaction.user.username } });
 
                     if (tanks > 0) {
                         log(`${amount} ${type} were added to ${team}.`, client);
@@ -667,7 +700,7 @@ client.on('interactionCreate', async interaction =>{
                     return interaction.reply(`No team with team name ${team} found`);
                 }
                 else if (type === 'planes') {
-                    const planes = await TeamUnits.update({ planes: unitAmount }, { where: { team: team } });
+                    const planes = await TeamUnits.update({ planes: planesAmount }, { where: { founder: interaction.user.username } });
 
                     if (planes > 0) {
                         log(`${amount} ${type} were added to ${team}.`, client);
@@ -677,7 +710,7 @@ client.on('interactionCreate', async interaction =>{
                     return interaction.reply(`No team with team name ${team} found`);
                 }
                 else if (type === 'ships') {
-                    const ships = await TeamUnits.update({ ships: unitAmount }, { where: { team: team } });
+                    const ships = await TeamUnits.update({ ships: shipsAmount }, { where: { founder: interaction.user.username } });
 
                     if (ships > 0) {
                         log(`${amount} ${type} were added to ${team}.`, client);

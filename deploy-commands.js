@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Routes, CommandInteractionOptionResolver, Client, IntentsBitField, NewsChannel } = require('discord.js');
+const { SlashCommandBuilder, Routes, CommandInteractionOptionResolver, Client, IntentsBitField, NewsChannel, TeamMemberMembershipState } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { clientId, guildId, token } = require('./config.json');
 const botIntents = new IntentsBitField(8)
@@ -26,14 +26,13 @@ const commands = [
     new SlashCommandBuilder()
         .setName('traintest')
         .setDescription('idk man')
-        .addStringOption(option => option.setName('teamname').setDescription('select which team to train units to').setRequired(true))
         .addStringOption(option => option.setName('units').setDescription('select what unit to train').setRequired(true).addChoices(
             { name: 'infantry', value: 'infantry' },
             { name: 'tanks', value: 'tanks' },
             { name: 'planes', value: 'planes' },
             { name: 'ships', value: 'ships' },
         ))
-        .addIntegerOption(option => option.setName('amount').setDescription('train multiple units').setRequired(true)),
+        .addIntegerOption(option=> option.setName(`amount`).setDescription(`train multiple units`).setRequired(true)),
     new SlashCommandBuilder()
         .setName('troll')
         .setDescription('sends a message in a specified channel')
@@ -62,6 +61,7 @@ const admincommands = [
         new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
         new SlashCommandBuilder().setName('disbandallteams').setDescription('disbands all teams made by user'),
         new SlashCommandBuilder().setName('droptable').setDescription('drops selected table'),
+        new SlashCommandBuilder().setName('updateembed').setDescription('testing updatable embed'),
         new SlashCommandBuilder()
             .setName('restoreteam')
             .setDescription('restores the selected team')
