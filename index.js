@@ -551,7 +551,7 @@ client.on('interactionCreate', async interaction =>{
                     .addFields(
                         { name: 'infantry', value: `${team.infantry}`, inline: true },
                         { name: 'tanks', value: `${team.tanks}`, inline: true },
-                        { name: '**---------------**', value: '**---------------**', },
+                        { name: '**---------------**', value: '\n', },
                         { name: 'planes', value: `${team.planes}`, inline: true },
                         { name: 'ships', value: `${team.ships}`, inline: true },
                     )
@@ -622,7 +622,6 @@ client.on('interactionCreate', async interaction =>{
                 case 'infantry' :
                     if (unitAmount <= 999 >= 20001) {
                         unitCooldown = 1800*unitAmount;
-                        //trainUnits(teamName, unitType, unitAmount)
                         testfunction(unitType, teamName, unitAmount, true)
                     } else {
                         testfunction(unitType, teamName, unitAmount, false)
@@ -669,14 +668,11 @@ client.on('interactionCreate', async interaction =>{
             const planesAmount = teamName.planes + amount
             const shipsAmount = teamName.ships + amount
             log(`Current cooldown: ${unitCooldown/60000}`, client);
-            /*
             if (over === false) {
             interaction.reply('you selected ' + amount + ' ' + type)
             } else if (over === true) {
             interaction.reply('you selected too many ' + type)	
             }
-            */
-
 
             try {
                 if (type === 'infantry') {
