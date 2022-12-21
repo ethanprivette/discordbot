@@ -24,6 +24,23 @@ const client = new Client({
 });
 const currency = new Collection();
 
+try {
+    client.on('ready', async client => {
+    const time = await Times.findOne({ where: { name: 'time' } })
+    if (now.getDate() != time.day) {
+        sentAlready = 0;
+        log(`Time updated ${time}`, client)
+        await Times.update({ day: updateDay }, { where: { name: 'time' } })
+        await Times.update({ month: updateMonth }, { where: { name: 'time' } })
+        await Times.update({ year: updateYear }, { where: { name: 'time' } })
+    } else {
+        sentAlready = 1;
+        log(time, client)
+    }})
+} catch (error) {
+    err(`dumbass`, error)
+}
+
 function log(msg, key) {
 	var undef;
 	console.log(msg);
@@ -144,6 +161,13 @@ const Teams = sequelize.define('teams', {
     user3: Sequelize.STRING,
     user4: Sequelize.STRING,
 });
+
+const Cooldown = sequelize.define('cooldowns', {
+    team: Sequelize.STRING,
+    user: Sequelize.STRING,
+    current: Sequelize.STRING,
+    future: Sequelize.STRING,
+});
  
 client.once('ready', async client => {
 	await sequelize.sync({ alter: true });
@@ -196,21 +220,7 @@ try {
 }
 
 
-try {
-    client.on('ready', async client => {
-    const time = await Times.findOne({ where: { name: 'time' } })
-    if (now.getDate() != time.day) {
-        sentAlready = 0;
-        log(`Time updated ${time}`, client)
-        await Times.update({ day: updateDay }, { where: { name: 'time' } })
-        await Times.update({ month: updateMonth }, { where: { name: 'time' } })
-        await Times.update({ year: updateYear }, { where: { name: 'time' } })
-    } else {
-        log(time, client)
-    }})
-} catch (error) {
-    err(`dumbass`, error)
-}
+
 
 
 //
@@ -614,9 +624,32 @@ client.on('interactionCreate', async interaction =>{
 	
 	if (interaction.commandName === 'traintest') {
 		var over;
+        var unitCooldown;
 		const unitAmount = interaction.options.getInteger('amount'); //tag amount
 		const unitType = interaction.options.getString('units'); //tag description
-        const teamName = await Teams.findOne({ where: { founder: interaction.user.username } })
+        const username = interaction.user.username
+        const teamName = await Teams.findOne({ where: { founder: interaction.user.username } }) //, user2: interaction.user.id, user3: interaction.user.id, user4: interaction.user.id
+        //const user2Find = await Teams.findOne({ attributes: ['user2'] })
+        //const user3Find = await Teams.findOne({ attributes: ['user3'] })
+        //const user4Find = await Teams.findOne({ attributes: ['user4'] })
+        const currentTime = now.toTimeString()
+        log(currentTime, client)
+
+        //create cooldown tag if one is not found
+        if (! await Cooldown.findOne({ where: { user: username } }) ) {
+            var cooldown = await Cooldown.create({
+                team: teamName.name,
+                user: username,
+                current: currentTime,
+                future: currentTime,
+            })
+            log(`Cooldown tag created`, client)
+        } else {
+            //update current minutes if tag is already found
+            var cooldown = await Cooldown.update({ current: currentTime }, { where: { user: username } })
+            log(`Cooldown tag updated`, client)
+        }
+
         try {
             switch (unitType) {
                 case 'infantry' :
@@ -667,19 +700,18 @@ client.on('interactionCreate', async interaction =>{
             const tanksAmount = teamName.tanks + amount
             const planesAmount = teamName.planes + amount
             const shipsAmount = teamName.ships + amount
-            log(`Current cooldown: ${unitCooldown/60000}`, client);
-            if (over === false) {
-            interaction.reply('you selected ' + amount + ' ' + type)
-            } else if (over === true) {
-            interaction.reply('you selected too many ' + type)	
+            const newTime = unitCooldown/60000 + cooldown.current
+            log(`Current minutes: ${cooldown.current}`, client)
+            if (over === true) {
+                interaction.reply('you selected too many ' + type)	
             }
-
             try {
                 if (type === 'infantry') {
                     const infantry = await TeamUnits.update({ infantry: infantryAmount }, { where: { founder: interaction.user.username } });
-
+                    const future = await Cooldown.update({ future: `${newTime}` }, { where: { user: interaction.user.username } })
                     if (infantry > 0) {
-                        log(`${amount} ${type} were added to ${team}.`, client);
+                        log(`${amount} ${type} were added to ${teamName.name}.`, client);
+                        log(`cooldown is: ${future.future}`, client)
                         return interaction.reply(`${amount} ${type} are being trained.`);
                     }
                     log(`${team} does not exist`, client);
