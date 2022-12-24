@@ -170,8 +170,12 @@ const Teams = sequelize.define('teams', {
 const Cooldown = sequelize.define('cooldowns', {
     team: Sequelize.STRING,
     user: Sequelize.STRING,
-    current: Sequelize.BLOB,
-    future: Sequelize.BLOB,
+    currentMinute: Sequelize.INTEGER,
+    currentHour: Sequelize.INTEGER,
+    currentDay: Sequelize.INTEGER,
+    futureMinute: Sequelize.INTEGER,
+    futureHour: Sequelize.INTEGER,
+    futureDay: Sequelize.INTEGER,
 });
  
 client.once('ready', async client => {
@@ -627,6 +631,7 @@ client.on('interactionCreate', async interaction =>{
 	
 	if (interaction.commandName === 'traintest') {
 		var over;
+        const date = new Date()
 		const unitAmount = interaction.options.getInteger('amount') ?? 0; //tag amount
 		const unitType = interaction.options.getString('units'); //tag description
         const username = interaction.user.username
@@ -642,26 +647,39 @@ client.on('interactionCreate', async interaction =>{
             await Cooldown.create({
                 team: teamName.name,
                 user: username,
-                current: now,
-                future: now,
+                currentMinute: date.getMinutes(),
+                currentHour: date.getHours(),
+                currentDay: date.getDay(),
+                futureMinute: date.getMinutes(),
+                futureHour: date.getHours(),
+                futureDay: date.getDate(),
             })
             log(`Cooldown tag created`, client)
         } else {
             //update current minutes if tag is already found
-            await Cooldown.update({ current: now }, { where: { user: username } })
+            await Cooldown.update({ currentMinute: date.getMinutes() }, { where: { user: username } })
+            await Cooldown.update({ currentHour: date.getHours() }, { where: { user: username } })
+            await Cooldown.update({ currentDay: date.getDate() }, { where: { user: username } })
+
             log(`Cooldown tag updated`, client)
         }
 
-        //check if current equals future and admin
-        if (cooldownName.current != cooldownName.future) {
+        //check if current equals future and adminIDS
+        if (cooldownName.currentDay >= cooldownName.futureDay || cooldownName.currentHour >= cooldownName.futureHour || cooldownName.currentMinute >= cooldownName.futureMinute ) {
             if (userID === wooperID || userID === ethonkosID ) {
-
+                var cooldown = false
             } else {
-                log(`${username} tried to train units on cooldown, what an idiot`, client)
-                return interaction.reply(`You are on cooldown idot, you can train more units at ${cooldownName.future}`)
+                cooldown = true
             }
         }
 
+        //cooldown checker
+        if (!cooldown) {
+            log(`${username} tried to train units on cooldown, what an idiot`, client)
+            return interaction.reply(`You are on cooldown idot, you can train more units at ${cooldownName.futureHour}:${cooldownName.futureMinute}`)
+        }
+
+        //checks which unit to train
         try {
             switch (unitType) {
                 case 'infantry' :
@@ -673,7 +691,6 @@ client.on('interactionCreate', async interaction =>{
                     break;
                 case 'tanks' :
                     if (unitAmount >= 9) {
-                        unitCooldown = 262500*unitAmount
                         testfunction(unitType, teamName, unitAmount, true)
                     } else {
                         testfunction(unitType, teamName, unitAmount, false)
@@ -681,7 +698,6 @@ client.on('interactionCreate', async interaction =>{
                     break;
                 case 'planes' :
                     if (unitAmount >= 5) {
-                        unitCooldown = 900000*unitAmount
                         testfunction(unitType, teamName, unitAmount, true)
                     } else {
                         testfunction(unitType, teamName, unitAmount, false)
@@ -689,7 +705,6 @@ client.on('interactionCreate', async interaction =>{
                     break;
                 case 'ships' :
                     if (unitAmount >= 2) {
-                        unitCooldown = 10800000*unitAmount
                         testfunction(unitType, teamName, unitAmount, true)
                     } else {
                         testfunction(unitType, teamName, unitAmount, false)
@@ -705,33 +720,41 @@ client.on('interactionCreate', async interaction =>{
         }
 	}
 
+        //train function lmao
         async function testfunction(type, team, amount, over) {
 
+            //constants for a shit ton of things
             const teamName = await TeamUnits.findOne({ where: { founder: interaction.user.username } })
-            const cooldownName = await Cooldown.findOne({ where: { user: interaction.user.username } })
             const infantryAmount = teamName.infantry + amount
             const tanksAmount = teamName.tanks + amount
             const planesAmount = teamName.planes + amount
             const shipsAmount = teamName.ships + amount
 
+            //check if units are over the max
             if (over === true) {
                 interaction.reply('you selected too many ' + type)	
             }
+            
+            //checks which unit was selected
             try {
                 if (type === 'infantry') {
 
-                    //TIME CONSTANT
+                    //TIME CONSTANTS
                     const totalCooldown = 1800*amount
-                    const time = new Date(cooldownName.current)
-                    time.setMinutes(totalCooldown/60000)
+                    const time = new Date()
+                    time.setDate(totalCooldown/86400000)
+                    time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
                     
                     //SQL FIND/UPDATE
                     const infantry = await TeamUnits.update({ infantry: infantryAmount }, { where: { founder: interaction.user.username } });
-                    await Cooldown.update({ future: time }, { where: { user: interaction.user.username } })
+                    await Cooldown.update({ futureHour: time.getHours() }, { where: { user: interaction.user.username } })
+                    await Cooldown.update({ futureMinute: time.getMinutes() }, { where: { user: interaction.user.username } })
+                    await Cooldown.update({ futureDay: time.getDate() }, { where: { user: interaction.user.username } })
 
+                    //TEAM CHECK
                     if (infantry > 0) {
                         log(`${amount} ${type} were added to ${teamName.name}.`, client);
-                        log(`Cooldown is: ${time} \nCurrent is: ${cooldownName.current}`, client)
+                        log(`Cooldown is: ${time}`, client)
                         return interaction.reply(`${amount} ${type} are being trained.`);
                     }
                     log(`${team} does not exist`, client);
@@ -741,15 +764,17 @@ client.on('interactionCreate', async interaction =>{
 
                     //TIME CONSTANTS
                     const totalCooldown = 262500*amount
-                    const time = now
-                    const newTime = time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
+                    const time = new Date()
+                    time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
 
+                    //SQL FIND/UPDATE
                     const tanks = await TeamUnits.update({ tanks: tanksAmount }, { where: { founder: interaction.user.username } });
-                    await Cooldown.update({ future: newTime }, { where: { user: interaction.user.username } })
+                    await Cooldown.update({ future: time }, { where: { user: interaction.user.username } })
 
+                    //TEAM CHECK
                     if (tanks > 0) {
                         log(`${amount} ${type} were added to ${team}.`, client);
-                        log(`Cooldown is ${newTime}`, client)
+                        log(`Cooldown is ${time}`, client)
                         return interaction.reply(`${amount} ${type} are being trained.`);
                     }
                     log(`${team} does not exist`, client);
@@ -759,15 +784,17 @@ client.on('interactionCreate', async interaction =>{
 
                     //TIME CONSTANTS
                     const totalCooldown = 900000*amount
-                    const time = now
-                    const newTime = time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
+                    const time = new Date()
+                    time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
 
+                    //SQL FIND/UPDATE
                     const planes = await TeamUnits.update({ planes: planesAmount }, { where: { founder: interaction.user.username } });
-                    await Cooldown.update({ future: newTime }, { where: { user: interaction.user.username } })
+                    await Cooldown.update({ future: time }, { where: { user: interaction.user.username } })
 
+                    //TEAM CHECK
                     if (planes > 0) {
                         log(`${amount} ${type} were added to ${team}.`, client);
-                        log(`Cooldown is ${newTime}`, client)
+                        log(`Cooldown is ${time}`, client)
                         return interaction.reply(`${amount} ${type} are being trained.`);
                     }
                     log(`${team} does not exist`, client);
@@ -777,15 +804,17 @@ client.on('interactionCreate', async interaction =>{
 
                     //TIME CONSTANTS
                     const totalCooldown = 10800000*amount
-                    const time = now
-                    const newTime = time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
+                    const time = new Date()
+                    time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
 
+                    //SQL FIND/UPDATE
                     const ships = await TeamUnits.update({ ships: shipsAmount }, { where: { founder: interaction.user.username } });
-                    await Cooldown.update({ future: newTime }, { where: { user: interaction.user.username } })
+                    await Cooldown.update({ future: time }, { where: { user: interaction.user.username } })
 
+                    //TEAM CHECK
                     if (ships > 0) {
                         log(`${amount} ${type} were added to ${team}.`, client);
-                        log(`Cooldown is ${newTime}`, client)
+                        log(`Cooldown is ${time}`, client)
                         return interaction.reply(`${amount} ${type} are being trained.`);
                     }
                     log(`${team} does not exist`, client);
