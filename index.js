@@ -664,16 +664,21 @@ client.on('interactionCreate', async interaction =>{
             log(`Cooldown tag updated`, client)
         }
 
-        //check if current equals future and adminIDS
-        if (cooldownName.currentDay >= cooldownName.futureDay || cooldownName.currentHour >= cooldownName.futureHour || cooldownName.currentMinute >= cooldownName.futureMinute ) {
-            if (userID === wooperID || userID === ethonkosID ) {
-                var cooldown = false
-            } else {
-                cooldown = true
-            }
+        log(`${cooldownName.currentMinute}, ${cooldownName.futureMinute}`, client)
+
+        //check if cooldown has passed
+        if (cooldownName.currentMinute >= cooldownName.futureMinute) {
+            var cooldown = true
+        } else if (cooldownName.currentHour > cooldownName.futureHour) {
+            cooldown = true
+        } else if (cooldownName.currentDay > cooldownName.futureDay) {
+            cooldown = true
+        } else {
+            cooldown = false
         }
 
-        //cooldown checker
+        log(cooldown, client)
+        //variable checker
         if (!cooldown) {
             log(`${username} tried to train units on cooldown, what an idiot`, client)
             return interaction.reply(`You are on cooldown idot, you can train more units at ${cooldownName.futureHour}:${cooldownName.futureMinute}`)
@@ -725,6 +730,7 @@ client.on('interactionCreate', async interaction =>{
 
             //constants for a shit ton of things
             const teamName = await TeamUnits.findOne({ where: { founder: interaction.user.username } })
+            const cooldowName = await Cooldown.findOne({ where: { user: interaction.user.username } })
             const infantryAmount = teamName.infantry + amount
             const tanksAmount = teamName.tanks + amount
             const planesAmount = teamName.planes + amount
@@ -741,9 +747,19 @@ client.on('interactionCreate', async interaction =>{
 
                     //TIME CONSTANTS
                     const totalCooldown = 1800*amount
-                    const time = new Date()
-                    time.setDate(totalCooldown/86400000)
-                    time.setHours(totalCooldown/3600000, totalCooldown/60000, totalCooldown/1000)
+                    var time = new Date()
+
+                    //TIME SETTERS
+                    if (totalCooldown/86400000 < 1) {
+                        if (totalCooldown/3600000 < 1) {
+                            time.setMinutes(totalCooldown/60000)
+                        } else {
+                            time.setHours(totalCooldown/=3600000, totalCooldown/60000)
+                        }
+                    } else {
+                        time.setDate(totalCooldown/86400000)
+                        time.setHours(totalCooldown/3600000, totalCooldown/60000)
+                    }
                     
                     //SQL FIND/UPDATE
                     const infantry = await TeamUnits.update({ infantry: infantryAmount }, { where: { founder: interaction.user.username } });
