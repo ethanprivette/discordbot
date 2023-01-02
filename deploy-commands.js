@@ -5,9 +5,7 @@ const botIntents = new IntentsBitField(8)
 
 // GLOBAL COMMANDS
 const commands = [
-    new SlashCommandBuilder().setName('big_red_button').setDescription('nukes everyone'),
-    new SlashCommandBuilder().setName('help').setDescription('bro it\'s one command cmon.'),
-    new SlashCommandBuilder().setName('fuckyou').setDescription('fuck you'),
+    new SlashCommandBuilder().setName('help').setDescription('wip'),
     new SlashCommandBuilder().setName('embedtest').setDescription('test embed'),
     new SlashCommandBuilder()
         .setName('build')
@@ -56,7 +54,6 @@ rest.put(Routes.applicationCommands('1009293626951598181'), { body: commands })
 
 // ADMIN COMMANDS
 const admincommands = [
-        new SlashCommandBuilder().setName('admintest').setDescription('testing command for admins'),
         new SlashCommandBuilder().setName('consoletest').setDescription('testing console tracing'),
         new SlashCommandBuilder().setName('disablebot').setDescription('disables the bot'),
         new SlashCommandBuilder().setName('disbandallteams').setDescription('disbands all teams made by user'),

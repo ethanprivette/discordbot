@@ -12,11 +12,13 @@ var sentAlready = 0;
 var updateDay = now.getDay()
 var updateMonth = now.getMonth()+1
 var updateYear = now.getFullYear()
+
 //ADMIN USER IDS
 const wooperID = '338080523886919680';
 const ethonkosID = '601077405481828362';
 const birdID = '933724550640848906';
 
+//client initialization
 const client = new Client({
     allowedMentions: {
         parse: [`users`, `roles`, `everyone`],
@@ -29,16 +31,18 @@ const currency = new Collection();
 //TIME UPDATE ON DAILY 
 try {
     client.on('ready', async client => {
+
     const time = await Times.findOne({ where: { name: 'time' } })
+
     if (now.getDate() != time.day) {
         sentAlready = 0;
-        log(`Time updated ${time}`, client)
         await Times.update({ day: updateDay }, { where: { name: 'time' } })
         await Times.update({ month: updateMonth }, { where: { name: 'time' } })
         await Times.update({ year: updateYear }, { where: { name: 'time' } })
+        log(`Time updated: ${time}`, client)
     } else {
         sentAlready = 1;
-        log(time, client)
+        log(`Time: ${time}`, client)
     }})
 } catch (error) {
     err(`dumbass`, error)
@@ -96,7 +100,6 @@ function err(msg, err, key) {
     }
 
 //sequelize//
-
 const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: 'path/to/database.sqlite'
@@ -109,7 +112,7 @@ try {
     err('Unable to connect to the database:', error)
   }
 
-
+//SQL TIME DEFINITION
 const Times = sequelize.define('times', {
 	name: {
         type: Sequelize.STRING,
@@ -121,7 +124,7 @@ const Times = sequelize.define('times', {
 });
 
 
-//
+//SQL TAG DEFINITION
 const Tags = sequelize.define('tags', {
     name: {
         type: Sequelize.STRING,
@@ -136,6 +139,7 @@ const Tags = sequelize.define('tags', {
     },
 });
 
+//SQL TEAMUNITS DEFINITION
 const TeamUnits = sequelize.define('units', {
     team: { 
         type: Sequelize.STRING,
@@ -156,6 +160,7 @@ const TeamUnits = sequelize.define('units', {
     },
 });
 
+//SQL TEAM DEFINITION
 const Teams = sequelize.define('teams', {
     name: {
         type: Sequelize.STRING,
@@ -167,6 +172,7 @@ const Teams = sequelize.define('teams', {
     user4: Sequelize.STRING,
 });
 
+//SQL COOLDOWN DEFINITION
 const Cooldown = sequelize.define('cooldowns', {
     team: Sequelize.STRING,
     user: Sequelize.STRING,
@@ -178,6 +184,7 @@ const Cooldown = sequelize.define('cooldowns', {
     futureDay: Sequelize.INTEGER,
 });
  
+//SQL TABLE CHECK
 client.once('ready', async client => {
 	await sequelize.sync({ alter: true });
 
@@ -275,7 +282,6 @@ client.on('interactionCreate', async interaction => {
 //MISC COMMANDS
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
-    const adminIDs = ['601077405481828362', '338080523886919680']
     const { commandName } = interaction;
 
     if (commandName === 'help') {
@@ -288,10 +294,6 @@ client.on('interactionCreate', async interaction => {
         setTimeout(() => {
             talkedRecently.delete(interaction.user.clientId);
         }, 5000);
-    } else if (commandName === 'fuckyou') {
-        if (client.clientId === adminIDs)
-            await interaction.reply('@everyone Fuck You');
-        else return;
     }
 });
 
@@ -302,16 +304,23 @@ client.on('interactionCreate', async interaction => {
     const { commandName } = interaction;
 
     if (commandName === 'teamcreatetest') {
-        const clientID = interaction.user.id
+
+        //fetch the params provided by user
         const teamName = interaction.options.getString('name')
         const target2 = interaction.options.getString('user2')
         const target3 = interaction.options.getString('user3')
         const target4 = interaction.options.getString('user4')
+
+        //founder/client fetch
+        const clientID = interaction.user.id
         const founder = interaction.user.username
+
+        //non-founder team find (WIP)
         const user2Find = await Teams.findAll({ attributes: ['user2'] })
         const user3Find = await Teams.findAll({ attributes: ['user3'] })
         const user4Find = await Teams.findAll({ attributes: ['user4'] })
 
+        //ADMIN CHECK
         if(clientID === wooperID || clientID === ethonkosID) {
             try {
                 const team = await Teams.create({
@@ -354,18 +363,28 @@ client.on('interactionCreate', async interaction => {
                     return interaction.reply(`${teamName} failed to initialize units.`)
                 }
             }
+
+        //check if founder already has a team
         } else if(await Teams.findAll({ attributes: ['founder'] === founder } )) {
             log(`${founder} tried to found a new team`, client)
-            return interaction.reply(`You already founded a team.`)
+            return interaction.reply(`You already founded a team, use /disband to disband it.`)
+
+        //check if the desired user2 is already on a team (WIP)
         } else if (target2 == user2Find) {
             log(`${target2} tried to found a new team`, client)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
+            
+        //check if the desired user3 is already on a team (WIP)
         } else if (target3 == user3Find) {
             log(`${target3} tried to found a new team`, client)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
+
+        //check if the desired user4 is already on a team (WIP)
         } else if (target4 == user4Find) {
             log(`${target4} tried to found a new team`, client)
             return interaction.reply(`You are already in a team, use /leave to leave it.`)
+
+        //then create a new team with desired users
         } else {
 
         try {
@@ -386,6 +405,8 @@ client.on('interactionCreate', async interaction => {
             err(`Team ${teamName} failed to be created`, error, client)
             return interaction.reply(`Something went wrong with adding the team.`)
         }
+
+        //initalize team units
         try {
             const teamUnits = await TeamUnits.create({
                 team: teamName,
@@ -408,8 +429,9 @@ client.on('interactionCreate', async interaction => {
                 return interaction.reply(`${teamName} failed to initialize units.`)
             }
         }
-    }
-    }
+    }}
+
+    //Shows a teams; name, founder, user2, user3, user4 and when it was created
     else if (commandName === 'teaminfo') {
         const teamName = interaction.options.getString('name');
 
@@ -422,6 +444,8 @@ client.on('interactionCreate', async interaction => {
 
         return interaction.reply(`Could not find team ${teamName}`)
     }
+
+    //Disbands team if you're the founder
     else if (commandName === 'disbandteam') {
         const teamName = interaction.options.getString('teamname')
 
@@ -437,6 +461,8 @@ client.on('interactionCreate', async interaction => {
             return interaction.reply('You did not found this team, so you cannot disband it.')
         }
     }
+
+    //Lists all teams
     else if (commandName === 'showteams') {
         const teamList = await Teams.findAll({attributes: ['name'] });
         const teamString = teamList.map(t => t.name).join(', ') || 'no teams created.';
@@ -444,6 +470,8 @@ client.on('interactionCreate', async interaction => {
         log(`Team list was accessed by ${interaction.user.username}.`, client)
         return interaction.reply(`List of teams: ${teamString}`);
     }
+
+    //Displays desired teams units
     else if (commandName === 'showteamunits') {
         const team = interaction.options.getString('team')
 
@@ -452,6 +480,8 @@ client.on('interactionCreate', async interaction => {
         log(`The units of ${team} were accessed by ${interaction.user.username}`, client)
         return interaction.reply(`${team} has ${units.infantry} infantry, ${units.tanks} tanks, ${units.planes} planes, and ${units.ships} ships.`, client)
     }
+
+    //Removes user from team they are currently on
     else if (commandName === 'leaveteam') {
         const teamName = interaction.options.getString('teamname')
         const userName = interaction.user.username
@@ -494,6 +524,7 @@ client.on('interactionCreate', async interaction =>{
     const chnl = interaction.options.getChannel('channel');
     const msg = interaction.options.getString('message');
 
+    //Sends a message through the bot into a specified channel
     if (commandName === 'troll') {
         if (userID === wooperID || userID === ethonkosID || userID === birdID) {
             try {
@@ -506,6 +537,8 @@ client.on('interactionCreate', async interaction =>{
         log(`Troll by ${interaction.user.username} failed`, client)
         return interaction.reply(`hah you tried lmao`)
         }
+
+    //Disbands all teams created by the user (TESTING)
     } else if (commandName === 'disbandallteams') {
         if (userID === wooperID || userID === ethonkosID) {
             const team = await Teams.findOne({ where: { founder: interaction.user.username } })
@@ -522,6 +555,8 @@ client.on('interactionCreate', async interaction =>{
             log(`${interaction.user.username} tried to delete teams`, client)
             return interaction.reply(`This is an admin only action`)
         }
+
+    //Restores a team if possible (WIP)
     } else if (commandName === 'restoreteam') {
         if (userID === wooperID || userID === ethonkosID) {
             const teamName = interaction.options.getString('team')
@@ -538,6 +573,8 @@ client.on('interactionCreate', async interaction =>{
             log(`${interaction.user.username} tried to restore a team`, client)
             return interaction.reply(`This is an admin only command.`)
         }
+    
+    //Drops an entire table of data (TESTING)
     } else if (commandName === 'droptable') {
         if (userID === wooperID || userID === ethonkosID) {
 
@@ -553,6 +590,8 @@ client.on('interactionCreate', async interaction =>{
             log(`${interaction.user.username} tried to drop a table`, client)
             return interaction.reply(`This is an admin only interation`)
         }
+
+    //Live updating embed with team stats (WIP)
     } else if (commandName === 'updateembed') {
         if (userID === wooperID || userID === ethonkosID) {
             const team = await TeamUnits.findOne({ where: { team: 'updatetest' } })
@@ -584,7 +623,7 @@ client.on('interactionCreate', async interaction =>{
     }
 });
 
-//NEEDS UPDATING -INFRASTRUCTURE
+//INFRASTRUCTURE (WIP)
 client.on('interactionCreate', async interaction =>{
     if (!interaction.isChatInputCommand()) return;
     
@@ -616,26 +655,21 @@ client.on('interactionCreate', async interaction =>{
     }
 });
 
-//NUKE COMMAND
-client.on('interactionCreate', async interaction =>{
-	if (!interaction.isChatInputCommand()) return;
-	
-    if (interaction.commandName === 'big_red_button') {
-        interaction.reply(`@everyone \nEveryone but the Checks now dead from nuclear fallout.`)
-    }
-});
-
 //TRAINING COMMAND
 client.on('interactionCreate', async interaction =>{
 	if (!interaction.isChatInputCommand()) return;
 	
 	if (interaction.commandName === 'traintest') {
-		var over;
+
+        //constants for date/username
         const date = new Date()
-		const unitAmount = interaction.options.getInteger('amount') ?? 0; //tag amount
-		const unitType = interaction.options.getString('units'); //tag description
         const username = interaction.user.username
-        const userID =  interaction.user.id
+
+        //gets user specified params
+		const unitAmount = interaction.options.getInteger('amount') ?? 0
+		const unitType = interaction.options.getString('units')
+ 
+        //SQL find teams/cooldowns
         const teamName = await Teams.findOne({ where: { founder: interaction.user.username } }) //, user2: interaction.user.id, user3: interaction.user.id, user4: interaction.user.id
         const cooldownName = await Cooldown.findOne({ where: { user: username } })
         //const user2Find = await Teams.findOne({ attributes: ['user2'] })
@@ -664,17 +698,23 @@ client.on('interactionCreate', async interaction =>{
             log(`Cooldown tag updated`, client)
         }
 
-        log(`${cooldownName.currentMinute}, ${cooldownName.futureMinute}`, client)
-
         //check if cooldown has passed
-        if (cooldownName.currentMinute >= cooldownName.futureMinute) {
-            var cooldown = true
-        } else if (cooldownName.currentHour > cooldownName.futureHour) {
-            cooldown = true
-        } else if (cooldownName.currentDay > cooldownName.futureDay) {
-            cooldown = true
+        if (cooldownName.currentDay <= cooldownName.futureDay) {
+            if (cooldownName.currentHour <= cooldownName.futureHour) {
+                if (cooldownName.currentMinute <= cooldownName.futureMinute) {
+                    var cooldown = false
+                    log(`option 1`, client)
+                } else {
+                    cooldown = true
+                    log(`option 2`, client)
+                }
+            } else {
+                cooldown = true
+                log(`option 3`, client)
+            }
         } else {
-            cooldown = false
+            cooldown = true
+            log(`option 4`, client)
         }
 
         log(cooldown, client)
@@ -725,12 +765,14 @@ client.on('interactionCreate', async interaction =>{
         }
 	}
 
-        //train function lmao
+        //train function
         async function testfunction(type, team, amount, over) {
 
-            //constants for a shit ton of things
+            //SQL find teamUnits/cooldown
             const teamName = await TeamUnits.findOne({ where: { founder: interaction.user.username } })
             const cooldowName = await Cooldown.findOne({ where: { user: interaction.user.username } })
+
+            //Amount of specified units TOTAL
             const infantryAmount = teamName.infantry + amount
             const tanksAmount = teamName.tanks + amount
             const planesAmount = teamName.planes + amount
@@ -747,18 +789,29 @@ client.on('interactionCreate', async interaction =>{
 
                     //TIME CONSTANTS
                     const totalCooldown = 1800*amount
+                    const minutes = totalCooldown/60000
+                    const hours = totalCooldown/3600000
+                    const day = totalCooldown/86400000
                     var time = new Date()
 
                     //TIME SETTERS
-                    if (totalCooldown/86400000 < 1) {
-                        if (totalCooldown/3600000 < 1) {
-                            time.setMinutes(totalCooldown/60000)
+                    if (day < 1) {
+                        if (hours < 1) {
+                            if (minutes + cooldowName.futureMinute >= 60) {
+                                time.setHours(hours + cooldowName.currentHour, minutes + cooldowName.currentMinute)
+                                log(`option 1`, client)
+                            } else {
+                                time.setMinutes(minutes + cooldowName.currentMinute)
+                                log(`option 2`, client)
+                            }
                         } else {
-                            time.setHours(totalCooldown/=3600000, totalCooldown/60000)
+                            time.setHours(hours + cooldowName.currentHour, minutes + cooldowName.currentMinute)
+                            log(`option 3`, client)
                         }
                     } else {
-                        time.setDate(totalCooldown/86400000)
-                        time.setHours(totalCooldown/3600000, totalCooldown/60000)
+                        time.setDate(day + cooldowName.currentDay)
+                        time.setHours(hours+ cooldowName.currentHour, minutes + cooldowName.currentMinute)
+                        log(`option 4`, client)
                     }
                     
                     //SQL FIND/UPDATE
