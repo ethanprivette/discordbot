@@ -704,9 +704,17 @@ client.on('interactionCreate', async interaction =>{
                 if (cooldownName.currentMinute <= cooldownName.futureMinute) {
                     var cooldown = false
                     log(`option 1`, client)
+                    log(`${cooldownName.currentMinute} : ${cooldownName.futureMinute}`, client)
                 } else {
-                    cooldown = true
-                    log(`option 2`, client)
+                    if (cooldownName.currentHour < cooldownName.futureHour) {
+                        var cooldown = false
+                        log(`option 1.2`, client)
+                        log(`${cooldownName.currentMinute} : ${cooldownName.futureMinute}`, client)
+                    } else {
+                        cooldown = true
+                        log(`option 2`, client)
+                        log(`${cooldownName.currentMinute} : ${cooldownName.futureMinute}`, client)
+                    }
                 }
             } else {
                 cooldown = true
@@ -799,19 +807,15 @@ client.on('interactionCreate', async interaction =>{
                         if (hours < 1) {
                             if (minutes + cooldowName.futureMinute >= 60) {
                                 time.setHours(hours + cooldowName.currentHour, minutes + cooldowName.currentMinute)
-                                log(`option 1`, client)
                             } else {
                                 time.setMinutes(minutes + cooldowName.currentMinute)
-                                log(`option 2`, client)
                             }
                         } else {
                             time.setHours(hours + cooldowName.currentHour, minutes + cooldowName.currentMinute)
-                            log(`option 3`, client)
                         }
                     } else {
                         time.setDate(day + cooldowName.currentDay)
                         time.setHours(hours+ cooldowName.currentHour, minutes + cooldowName.currentMinute)
-                        log(`option 4`, client)
                     }
                     
                     //SQL FIND/UPDATE
