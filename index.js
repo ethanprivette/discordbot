@@ -248,11 +248,49 @@ client.on('interactionCreate', async interaction => {
 
     const { commandName } = interaction;
 
-    if (commandName === 'embedtest') {
+    if (commandName === 'help') {
         if (talkedRecently.has(interaction.user.clientId)){
             interaction.reply({ content: 'Please run the command again in 20 seconds.'})
         } else {
             const team = await TeamUnits.findOne({ where: { team: 'embedtest' } })
+            const testEmbed = new EmbedBuilder()
+                .setColor(0x0099FF)
+                .setTitle(`Command List`)
+                //.setURL('https://discord.js.org/')
+                .setAuthor({ name: 'Victorum', iconURL: 'https://i.imgur.com/XiAmS2H.png', url: 'https://discord.js.org' })
+                .setDescription(`List of all available command atm`)
+                .setThumbnail('https://i.imgur.com/XiAmS2H.png')
+                .addFields(
+                    { name: 'traintest', value: `Takes a unit type and value to train units`, inline: true },
+                    { name: `build`, value: `Builds infrastructure (WIP)`, inline: true },
+                    { name: `teamcreate`, value: `Creates a team with the specified users`, inline: true },
+                    { name: `teaminfo`, value: `Displays specified team\'s members`, inline: true },
+                    { name: `disbandteam`, value: `Disband the team you are the founder of`, inline: true },
+                    { name: `leavetest`, value: `Leaves the team you are apart of`, inline: true },
+                    { name: `showteamunits`, value: `Displays a team\'s units`, inline: true },
+                    { name: `showteams`, value: `Displays all created teams`, inline: true },
+                )
+                //.setImage('https://i.imgur.com/AfFp7pu.png')
+                .setTimestamp()
+                //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+        
+            interaction.reply({ embeds: [testEmbed] })
+        } talkedRecently.add(interaction.user.clientId);
+        setTimeout(() => {
+            talkedRecently.delete(interaction.user.clientId);
+        }, 5000 );
+    }
+})
+
+//MISC COMMANDS
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+    const { commandName } = interaction;
+
+    if (commandName === 'embedtest') {
+        if (talkedRecently.has(interaction.user.clientId)){
+            interaction.reply({ content: 'Please run the command again in 5 seconds.'})
+        } else {
             const testEmbed = new EmbedBuilder()
                 .setColor(0x0099FF)
                 .setTitle(`${team.team}`)
@@ -272,23 +310,6 @@ client.on('interactionCreate', async interaction => {
                 //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
         
             interaction.reply({ embeds: [testEmbed] })
-        } talkedRecently.add(interaction.user.clientId);
-        setTimeout(() => {
-            talkedRecently.delete(interaction.user.clientId);
-        }, cooldown );
-    }
-})
-
-//MISC COMMANDS
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-    const { commandName } = interaction;
-
-    if (commandName === 'help') {
-        if (talkedRecently.has(interaction.user.clientId)){
-            interaction.reply({ content: 'Please run the command again in 5 seconds.'})
-        } else {
-            interaction.reply('Use /train to train units.')
         }
         talkedRecently.add(interaction.user.clientId);
         setTimeout(() => {
@@ -671,7 +692,7 @@ client.on('interactionCreate', async interaction =>{
  
         //SQL find teams/cooldowns
         const teamName = await Teams.findOne({ where: { founder: interaction.user.username } }) //, user2: interaction.user.id, user3: interaction.user.id, user4: interaction.user.id
-        const cooldownName = await Cooldown.findOne({ where: { user: username } })
+        var cooldownName = await Cooldown.findOne({ where: { user: username } })
         //const user2Find = await Teams.findOne({ attributes: ['user2'] })
         //const user3Find = await Teams.findOne({ attributes: ['user3'] })
         //const user4Find = await Teams.findOne({ attributes: ['user4'] })
@@ -698,22 +719,21 @@ client.on('interactionCreate', async interaction =>{
             log(`Cooldown tag updated`, client)
         }
 
+        cooldownName = await Cooldown.findOne({ where: { user: username } })
+
         //check if cooldown has passed
         if (cooldownName.currentDay <= cooldownName.futureDay) {
             if (cooldownName.currentHour <= cooldownName.futureHour) {
                 if (cooldownName.currentMinute <= cooldownName.futureMinute) {
                     var cooldown = false
                     log(`option 1`, client)
-                    log(`${cooldownName.currentMinute} : ${cooldownName.futureMinute}`, client)
                 } else {
                     if (cooldownName.currentHour < cooldownName.futureHour) {
                         var cooldown = false
                         log(`option 1.2`, client)
-                        log(`${cooldownName.currentMinute} : ${cooldownName.futureMinute}`, client)
                     } else {
                         cooldown = true
                         log(`option 2`, client)
-                        log(`${cooldownName.currentMinute} : ${cooldownName.futureMinute}`, client)
                     }
                 }
             } else {

@@ -36,6 +36,32 @@ const commands = [
         .setDescription('sends a message in a specified channel')
         .addStringOption(option => option.setName('message').setDescription('message to send troll').setRequired(true))
         .addChannelOption(option => option.setName('channel').setDescription('channel to send troll').setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('teamcreate')
+        .setDescription('creates a team')
+        .addStringOption(option => option.setName('name').setDescription('team name').setRequired(true))
+        .addStringOption(option => option.setName('user2').setDescription('USE CLIENT ID'))
+        .addStringOption(option => option.setName('user3').setDescription('USE CLIENT ID'))
+        .addStringOption(option => option.setName('user4').setDescription('USE CLIENT ID')),
+    new SlashCommandBuilder()
+        .setName('teaminfo')
+        .setDescription('displays a team\'s members')
+        .addStringOption(option => option.setName('name').setDescription('select a team to see').setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('disbandteam')
+        .setDescription('disbands a team')
+        .addStringOption(option => option.setName('teamname').setDescription('name of the team to disband').setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('leaveteam')
+        .setDescription('leave a team')
+        .addStringOption(option => option.setName('teamname').setDescription('team to leave').setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('showteamunits')
+        .setDescription('displays a team\'s units')
+        .addStringOption(option => option.setName('team').setDescription('name of team to display').setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('showteams')
+        .setDescription('displays all created teams'),
     new SlashCommandBuilder().setName('balance').setDescription('checks users balance'),
     new SlashCommandBuilder().setName('inventory').setDescription('shows users inventory'),
     new SlashCommandBuilder().setName('transfer').setDescription('transfer energy to another user'),
@@ -64,25 +90,6 @@ const admincommands = [
             .setDescription('restores the selected team')
             .addStringOption(option=> option.setName('team').setDescription('team name').setRequired(true)),
         new SlashCommandBuilder()
-            .setName('teamcreatetest')
-            .setDescription('creates a team')
-            .addStringOption(option => option.setName('name').setDescription('team name').setRequired(true))
-            .addStringOption(option => option.setName('user2').setDescription('USE CLIENT ID'))
-            .addStringOption(option => option.setName('user3').setDescription('USE CLIENT ID'))
-            .addStringOption(option => option.setName('user4').setDescription('USE CLIENT ID')),
-        new SlashCommandBuilder()
-            .setName('teaminfo')
-            .setDescription('displays a team\'s members')
-            .addStringOption(option => option.setName('name').setDescription('select a team to see').setRequired(true)),
-        new SlashCommandBuilder()
-            .setName('disbandteam')
-            .setDescription('disbands a team')
-            .addStringOption(option => option.setName('teamname').setDescription('name of the team to disband').setRequired(true)),
-        new SlashCommandBuilder()
-            .setName('leaveteam')
-            .setDescription('leave a team')
-            .addStringOption(option => option.setName('teamname').setDescription('team to leave').setRequired(true)),
-        new SlashCommandBuilder()
             .setName('addtag')
             .setDescription('adding tags')
             .addStringOption(option => option.setName('name').setDescription('tagname').setRequired(true))
@@ -102,13 +109,6 @@ const admincommands = [
             .setName('deletetag')
             .setDescription('deleted selected tag')
             .addStringOption(option => option.setName('name').setDescription('deletes selected tag').setRequired(true)),
-        new SlashCommandBuilder()
-            .setName('showteams')
-            .setDescription('displays all created teams'),
-        new SlashCommandBuilder()
-            .setName('showteamunits')
-            .setDescription('displays a team\'s units')
-            .addStringOption(option => option.setName('team').setDescription('name of team to display').setRequired(true)),
 
     ]
     
