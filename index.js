@@ -691,16 +691,32 @@ client.on('interactionCreate', async interaction =>{
 		const unitType = interaction.options.getString('units')
  
         //SQL find teams/cooldowns
-        const teamName = await Teams.findOne({ where: { founder: interaction.user.username } }) //, user2: interaction.user.id, user3: interaction.user.id, user4: interaction.user.id
+        const founderFind = await Teams.findOne({ where: { founder: interaction.user.username } })
+        const user2Find = await Teams.findOne({ where: { user2: interaction.user.id } })
+        const user3Find = await Teams.findOne({ where: { user3: interaction.user.id } })
+        const user4Find = await Teams.findOne({ where: { user4: interaction.user.id } })
         var cooldownName = await Cooldown.findOne({ where: { user: username } })
-        //const user2Find = await Teams.findOne({ attributes: ['user2'] })
-        //const user3Find = await Teams.findOne({ attributes: ['user3'] })
-        //const user4Find = await Teams.findOne({ attributes: ['user4'] })
+
+        if (founderFind) {
+            var teamName = founderFind.name
+            log(`${teamName}`, client)
+        } else if (user2Find) {
+            teamName = user2Find.name
+            log(`${teamName}`, client)
+        } else if (user3Find) {
+            teamName = user3Find.name
+            log(`${teamName}`, client)
+        } else if (user4Find) {
+            teamName = user4Find.name
+            log(`${teamName}`, client)
+        } else (
+            log(`Something went wrong lmao`, client)
+        )
 
         //create cooldown tag if one is not found
         if (! await Cooldown.findOne({ where: { user: username } }) ) {
             await Cooldown.create({
-                team: teamName.name,
+                team: teamName,
                 user: username,
                 currentMinute: date.getMinutes(),
                 currentHour: date.getHours(),
@@ -797,7 +813,7 @@ client.on('interactionCreate', async interaction =>{
         async function testfunction(type, team, amount, over) {
 
             //SQL find teamUnits/cooldown
-            const teamName = await TeamUnits.findOne({ where: { founder: interaction.user.username } })
+            //const teamName = await TeamUnits.findOne({ where: { founder: interaction.user.username } })
             const cooldowName = await Cooldown.findOne({ where: { user: interaction.user.username } })
 
             //Amount of specified units TOTAL
@@ -839,7 +855,7 @@ client.on('interactionCreate', async interaction =>{
                     }
                     
                     //SQL FIND/UPDATE
-                    const infantry = await TeamUnits.update({ infantry: infantryAmount }, { where: { founder: interaction.user.username } });
+                    const infantry = await TeamUnits.update({ infantry: infantryAmount }, { where: { team: teamName } });
                     await Cooldown.update({ futureHour: time.getHours() }, { where: { user: interaction.user.username } })
                     await Cooldown.update({ futureMinute: time.getMinutes() }, { where: { user: interaction.user.username } })
                     await Cooldown.update({ futureDay: time.getDate() }, { where: { user: interaction.user.username } })
