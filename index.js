@@ -674,13 +674,14 @@ client.on('interactionCreate', async interaction =>{
                 currentMinute: date.getMinutes(),
                 currentHour: date.getHours(),
                 currentDay: date.getDay(),
-                futureMinute: date.getMinutes(),
+                futureMinute: date.getMinutes() - 1,
                 futureHour: date.getHours(),
                 futureDay: date.getDate(),
             })
             log(`Cooldown tag created`, client)
         } else {
             //update current minutes if tag is already found
+            await Cooldown.update({ team: teamName }, { where: { user: username } })
             await Cooldown.update({ currentMinute: date.getMinutes() }, { where: { user: username } })
             await Cooldown.update({ currentHour: date.getHours() }, { where: { user: username } })
             await Cooldown.update({ currentDay: date.getDate() }, { where: { user: username } })
@@ -780,7 +781,7 @@ client.on('interactionCreate', async interaction =>{
                 log(`${interaction.user.username} tried to train too many ${type}`, client)
                 return interaction.reply('you selected too many ' + type)	
             }
-            
+
             //checks which unit was selected
             try {
                 if (type === 'infantry') {
