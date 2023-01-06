@@ -1128,7 +1128,7 @@ client.on('interactionCreate', async interaction => {
     } 
     else if (commandName === 'buy') {
         const itemName = interaction.options.getString('item');
-        const item = await EnergyShop.findOne({ where: { name: { [Op.like]: itemName } } });
+        const item = await CurrencyShop.findOne({ where: { name: { [Op.like]: itemName } } });
     
         if (!item) return interaction.reply(`That item doesn't exist.`);
         if (item.cost > currency.getBalance(interaction.user.id)) {
@@ -1142,7 +1142,7 @@ client.on('interactionCreate', async interaction => {
         return interaction.reply(`You've bought: ${item.name}.`);
     } 
     else if (commandName === 'shop') {
-        const items = await EnergyShop.findAll();
+        const items = await CurrencyShop.findAll();
         return interaction.reply(items.map(i => `${i.name}: ${i.cost}💰`).join('\n'));
     } 
     else if (commandName === 'leaderboard') {
