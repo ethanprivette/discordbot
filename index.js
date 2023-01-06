@@ -1040,7 +1040,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 //SQL CURRENCY SYSTEM???
-Reflect.defineProperty(currency, 'add', {
+/*Reflect.defineProperty(currency, 'add', {
 	value: async (id, amount) => {
 		const user = currency.get(id);
 
@@ -1062,6 +1062,26 @@ Reflect.defineProperty(currency, 'getBalance', {
 		return user ? user.balance : 0;
 	},
 });
+*/
+
+async function addBalance(id, amount) {
+	const user = currency.get(id);
+
+	if (user) {
+		user.balance += Number(amount);
+		return user.save();
+	}
+
+	const newUser = await Users.create({ user_id: id, balance: amount });
+	currency.set(id, newUser);
+
+	return newUser;
+}
+
+function getBalance(id) {
+	const user = currency.get(id);
+	return user ? user.balance : 0;
+}
 
 client.once('ready', async () => {
     const storedBalances = await Users.findAll();
