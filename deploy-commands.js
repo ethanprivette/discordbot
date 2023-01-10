@@ -65,7 +65,9 @@ const commands = [
     new SlashCommandBuilder().setName('balance').setDescription('checks users balance'),
     new SlashCommandBuilder().setName('inventory').setDescription('shows users inventory'),
     new SlashCommandBuilder().setName('transfer').setDescription('transfer energy to another user'),
-    new SlashCommandBuilder().setName('buy').setDescription('buys an item from the shop')
+    new SlashCommandBuilder()
+        .setName('buy')
+        .setDescription('buys an item from the shop')
         .addStringOption(option => option.setName('name').setDescription('select a item').setRequired(true)),
     new SlashCommandBuilder().setName('shop').setDescription('displays the item shop'),
     new SlashCommandBuilder().setName('leaderboard').setDescription('shows the leaderboard'),

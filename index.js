@@ -1,4 +1,4 @@
-const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team, ClientUser, ThreadMemberManager } = require('discord.js');
+const { Client, Collection, Formatters, GatewayIntentBits, IntentsBitField, SlashCommandBuilder, Routes, TextChannel, messageLink, Message, ActionRowBuilder, ButtonBuilder, ButtonStyle, ButtonInteraction, EmbedBuilder, embedLength, Team, ClientUser, ThreadMemberManager, MessageComponentInteraction, Events } = require('discord.js');
 const botIntents = new IntentsBitField(8);
 const { clientId, guildId, token } = require('./config.json');
 const { Sequelize, Transaction, Op, where } = require('sequelize');
@@ -1072,9 +1072,17 @@ client.once('ready', async () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('messageCreate', async message => {
-	if (message.author.bot) return;
-	currency.add(message.author.id, 1);
+client.once("MessageCreate", async message => {
+    try {
+        log(message.author.bot, client)
+        if (message.author.bot) return;
+
+        currency.add(message.author.id, 1);
+        log(`1 coin added to ${message.author.id}`, client)
+        
+    } catch(error) {
+        err(`something went wrong`, error, client)
+    }
 });
 
 client.on('interactionCreate', async interaction => {
@@ -1109,7 +1117,7 @@ client.on('interactionCreate', async interaction => {
         return interaction.reply(`Successfully transferred ${transferAmount}💰 to ${transferTarget.tag}. Your current balance is ${currency.getBalance(interaction.user.id)}💰`);
     } 
     else if (commandName === 'buy') {
-        const itemName = interaction.options.getString('item');
+        const itemName = interaction.options.getString('name');
         const item = await CurrencyShop.findOne({ where: { name: { [Op.like]: itemName } } });
     
         if (!item) return interaction.reply(`That item doesn't exist.`);
