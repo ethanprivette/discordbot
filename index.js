@@ -575,18 +575,41 @@ client.on('interactionCreate', async interaction =>{
             const team = await TeamUnits.findOne({ where: { team: 'updatetest' } })
             try {
                 const updatetest = new EmbedBuilder()
-                    .setColor(0x0099ff)
-                    .setTitle(team.team)
-                    .setAuthor({ name: 'Victorum', iconURL: 'https://i.imgur.com/XiAmS2H.png', url: 'https://discord.js.org' })
-                    .setDescription(`test`)
-                    .addFields(
-                        { name: 'infantry', value: `${team.infantry}`, inline: true },
-                        { name: 'tanks', value: `${team.tanks}`, inline: true },
-                        { name: '**---------------**', value: '\n', },
-                        { name: 'planes', value: `${team.planes}`, inline: true },
-                        { name: 'ships', value: `${team.ships}`, inline: true },
-                    )
-                    .setTimestamp()
+                    .setColor("#")
+/*
+                    "content": null,
+                    "embeds": [
+                      {
+                        "title": "Team Units:",
+                        "color": 5814783,
+                        "fields": [
+                          {
+                            "name": "-----------------------------------------------",
+                            "value": "**Team Name: e**"
+                          },
+                          {
+                            "name": "Units:",
+                            "value": "Infantry: 0, Tanks: 0, Planes: 0, Ships: 0",
+                            "inline": true
+                          },
+                          {
+                            "name": "-----------------------------------------------",
+                            "value": "**Team Name: a**"
+                          },
+                          {
+                            "name": "Units:",
+                            "value": "Infantry: 0, Tanks: 0, Planes: 0, Ships: 0"
+                          }
+                        ],
+                        "author": {
+                          "name": "Victorum",
+                          "icon_url": "https://i.imgur.com/XiAmS2H.png"
+                        },
+                        "timestamp": "2023-01-26T19:49:00.000Z"
+                      }
+                    ],
+                    "attachments": []
+*/
 
                     log(`updateembed test was used`, client)
                     return interaction.reply({ embeds: [updatetest] })
@@ -711,7 +734,7 @@ client.on('interactionCreate', async interaction =>{
         }
 
         
-        if (interaction.user.id === ethonkosID) {
+        if (interaction.user.id == ethonkosID || interaction.user.id == wooperID) {
             cooldown = true
             log(`admin override`, client)
         }
@@ -1072,17 +1095,12 @@ client.once('ready', async () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.once("MessageCreate", async message => {
-    try {
-        log(message.author.bot, client)
-        if (message.author.bot) return;
+client.on("messageCreate", async message => {
+        log(message.user.bot, client)
+        if (message.user.bot) return;   
 
-        currency.add(message.author.id, 1);
-        log(`1 coin added to ${message.author.id}`, client)
-        
-    } catch(error) {
-        err(`something went wrong`, error, client)
-    }
+        currency.add(message.user.id, 1);
+        log(`1 coin added to ${message.user.id}`, client)
 });
 
 client.on('interactionCreate', async interaction => {
