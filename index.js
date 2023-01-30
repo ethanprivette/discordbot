@@ -6,6 +6,9 @@ const talkedRecently = new Set();
 const { Users, CurrencyShop } = require('./dbObjects.js');
 const { SqlError } = require('mariadb');
 
+//EMBED VARIABLES
+var embed;
+
 //TIME VARIABLES
 var now = new Date();
 var sentAlready = 0;
@@ -17,6 +20,12 @@ var updateYear = now.getFullYear()
 const wooperID = '338080523886919680';
 const ethonkosID = '601077405481828362';
 const birdID = '933724550640848906';
+
+embed = new EmbedBuilder()
+    .setColor(0x0099FF)
+    .setTitle("Blank intialization")
+    .setAuthor({ name: "Victorum", url: 'https://i.imgur.com/XiAmS2H.png' })
+    .setTimestamp()
 
 //client initialization
 const client = new Client({
@@ -186,7 +195,7 @@ const Cooldown = sequelize.define('cooldowns', {
  
 //SQL TABLE CHECK
 client.once('ready', async client => {
-	await sequelize.sync({ alter: true });
+	await sequelize.sync();
 
 	log(`Logged in as ${client.user.tag}!`, client)	
 });
@@ -234,15 +243,39 @@ try {
 	err('youfuckedupwooper', error, client)
 }
 
+async function updateEmbed() {
+    var channel = client.channels.fetch('1017418632940224522');
+    const teams = await TeamUnits.findAll({ attributes: ['id'] })
+    for(let i = 0; i < teams; i++) {
+    const team = await TeamUnits.findOne({ where: { id: i } })
 
+    console.log(i);
 
+    if(team) {
+        embed = new EmbedBuilder()
+            .setColor(0x0099FF)
+            .setTitle("Team Units: ")
+            .setAuthor({ name: "Victorum", url: 'https://i.imgur.com/XiAmS2H.png' })
+            .addFields (
+                { name: "-----------------------------------------------", value: `**Team Name: ${team.team}**` },
+                { name: "Units: ", value: `Infantry ${team.infantry}, Tanks: ${team.tanks}, Planes: ${team.planes}, Ships: ${team.ships}`},
+            )
+            .setTimestamp()
 
+        channel.then(channel=>channel.send({ embeds: [embed]}))
+        log(`Embed sent`, client)
+    } else {
+        log(`No team found, embed failed`)
+    }
+}}
 
-//EMBED TEST
+setInterval(updateEmbed, 10000);
+
 client.on('ready', client => {
     log('Bot is online', client)
 });
 
+//EMBED TEST
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
@@ -342,11 +375,7 @@ client.on('interactionCreate', async interaction => {
         const user3Find = await Teams.findOne({ where: { user3: target3 } })
         const user4Find = await Teams.findOne({ where: { user3: target4 } })
 
-        //ADMIN CHECK
-        if(clientID === wooperID || clientID === ethonkosID) {
-           var teamed = false
-        }
-
+        //TEAM CHECK
         if (founderFind) {
             teamed = true
         } else if (user2Find) {
@@ -356,6 +385,11 @@ client.on('interactionCreate', async interaction => {
         } else if (user4Find) {
             teamed = true
         }
+
+        //ADMIN CHECK
+        if(clientID === wooperID || clientID === ethonkosID) {
+            var teamed = false
+         }
         
         log(teamed, client)
 
@@ -572,51 +606,27 @@ client.on('interactionCreate', async interaction =>{
     //Live updating embed with team stats (WIP)
     } else if (commandName === 'updateembed') {
         if (userID === wooperID || userID === ethonkosID) {
-            const team = await TeamUnits.findOne({ where: { team: 'updatetest' } })
+            const teams = await TeamUnits.findAll({ attributes: ['id'] })
+            for(let i = 0; i < teams; i++) {
+            const team = await TeamUnits.findOne({ where: { id: i } })
             try {
-                const updatetest = new EmbedBuilder()
-                    .setColor("#")
-/*
-                    "content": null,
-                    "embeds": [
-                      {
-                        "title": "Team Units:",
-                        "color": 5814783,
-                        "fields": [
-                          {
-                            "name": "-----------------------------------------------",
-                            "value": "**Team Name: e**"
-                          },
-                          {
-                            "name": "Units:",
-                            "value": "Infantry: 0, Tanks: 0, Planes: 0, Ships: 0",
-                            "inline": true
-                          },
-                          {
-                            "name": "-----------------------------------------------",
-                            "value": "**Team Name: a**"
-                          },
-                          {
-                            "name": "Units:",
-                            "value": "Infantry: 0, Tanks: 0, Planes: 0, Ships: 0"
-                          }
-                        ],
-                        "author": {
-                          "name": "Victorum",
-                          "icon_url": "https://i.imgur.com/XiAmS2H.png"
-                        },
-                        "timestamp": "2023-01-26T19:49:00.000Z"
-                      }
-                    ],
-                    "attachments": []
-*/
+                embed = new EmbedBuilder()
+                    .setColor(0x0099FF)
+                    .setTitle("Team Units: ")
+                    .setAuthor({ name: "Victorum", url: 'https://i.imgur.com/XiAmS2H.png' })
+                    .addFields (
+                        { name: "-----------------------------------------------", value: `**Team Name: ${team.team}**` },
+                        { name: "Units: ", value: `Infantry ${team.infantry}, Tanks: ${team.tanks}, Planes: ${team.planes}, Ships: ${team.ships}`},
+                    )
+                    .setTimestamp()
 
                     log(`updateembed test was used`, client)
-                    return interaction.reply({ embeds: [updatetest] })
+                    return interaction.reply({ embeds: [embed] })
             } catch (error) {
                 err(`something went wrong`, error, client)
                 return interaction.reply(`check logs`)
             }
+        }
         } else {
             log(`${interaction.user.username} tried to use updateembed`)
             return interaction.reply(`this is an admin only command`)
