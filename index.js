@@ -245,29 +245,27 @@ try {
 
 async function updateEmbed() {
     var channel = client.channels.fetch('1017418632940224522');
-    const teams = await TeamUnits.findAll({ attributes: ['id'] })
-    for(let i = 0; i < teams; i++) {
-    const team = await TeamUnits.findOne({ where: { id: i } })
+    for(let i = 0; i < 10; i++) {
+        const team = await TeamUnits.findOne({ where: { id: i } })
 
-    console.log(i);
+        if(team) {
+            embed = new EmbedBuilder()
+                .setColor(0x0099FF)
+                .setTitle("Team Units: ")
+                .setAuthor({ name: "Victorum", url: 'https://i.imgur.com/XiAmS2H.png' })
+                .addFields (
+                    { name: "-----------------------------------------------", value: `**Team Name: ${team.team}**` },
+                    { name: "Units: ", value: `Infantry ${team.infantry}, Tanks: ${team.tanks}, Planes: ${team.planes}, Ships: ${team.ships}`},
+                )
+                .setTimestamp()
 
-    if(team) {
-        embed = new EmbedBuilder()
-            .setColor(0x0099FF)
-            .setTitle("Team Units: ")
-            .setAuthor({ name: "Victorum", url: 'https://i.imgur.com/XiAmS2H.png' })
-            .addFields (
-                { name: "-----------------------------------------------", value: `**Team Name: ${team.team}**` },
-                { name: "Units: ", value: `Infantry ${team.infantry}, Tanks: ${team.tanks}, Planes: ${team.planes}, Ships: ${team.ships}`},
-            )
-            .setTimestamp()
-
-        channel.then(channel=>channel.send({ embeds: [embed]}))
-        log(`Embed sent`, client)
-    } else {
-        log(`No team found, embed failed`)
+            channel.then(channel=>channel.send({ embeds: [embed]}))
+            log(`Embed sent`, client)
+        } else {
+            log(`No team found, embed failed`)
+        }
     }
-}}
+}
 
 setInterval(updateEmbed, 10000);
 
